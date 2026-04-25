@@ -10,6 +10,7 @@ import {UnstoppableMonitor} from "../../src/unstoppable/UnstoppableMonitor.sol";
 contract UnstoppableChallenge is Test {
     address deployer = makeAddr("deployer");
     address player = makeAddr("player");
+    address attacker = makeAddr("attacker");
 
     uint256 constant TOKENS_IN_VAULT = 1_000_000e18;
     uint256 constant INITIAL_PLAYER_TOKEN_BALANCE = 10e18;
@@ -91,7 +92,7 @@ contract UnstoppableChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_unstoppable() public checkSolvedByPlayer {
-        
+         token.transfer(address(vault), 1);
     }
 
     /**

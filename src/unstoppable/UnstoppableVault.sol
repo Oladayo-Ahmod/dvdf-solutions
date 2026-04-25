@@ -58,7 +58,7 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
             revert UnsupportedCurrency();
         }
 
-        if (block.timestamp < end && _amount < maxFlashLoan(_token)) {
+        if (block.timestamp < end && _amount < maxFlashLoan(_token)) { // @audit : block.timestamp check
             return 0;
         } else {
             return _amount.mulWadUp(FEE_FACTOR);
@@ -97,7 +97,7 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
         }
 
         // pull amount + fee from receiver, then pay the fee to the recipient
-        ERC20(_token).safeTransferFrom(address(receiver), address(this), amount + fee);
+        ERC20(_token).safeTransferFrom(address(receiver), address(this), amount + fee); // @audit : arbitrary send
         ERC20(_token).safeTransfer(feeRecipient, fee);
 
         return true;
@@ -122,7 +122,7 @@ contract UnstoppableVault is IERC3156FlashLender, ReentrancyGuard, Owned, ERC462
 
     // Allow owner to execute arbitrary changes when paused
     function execute(address target, bytes memory data) external onlyOwner whenPaused {
-        (bool success,) = target.delegatecall(data);
+        (bool success,) = target.delegatecall(data); // @audit: delegating calls to address controlled by user, dont think this can be the main issue
         require(success);
     }
 
