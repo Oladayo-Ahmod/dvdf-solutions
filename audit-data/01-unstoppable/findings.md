@@ -14,6 +14,17 @@ halting all flash loans.
 3. After the transfer, any attempt to call `flashLoan()` will fail due to the
 invariant check, effectively halting all flash loan functionality.
 
-<>
+<details>
+<summary>Example Code Snippet</summary>
+
+```javascript 
+ function test_unstoppable() public checkSolvedByPlayer {
+         token.transfer(address(vault), 1);
+    }
+```
+</details>
 
 **Recommended Mitigation:**
+Track deposits internally with a separate state variable instead 
+of relying on raw `balanceOf()`. Never use `balanceOf(address(this))` 
+as a source of truth for accounting. Instead, maintain an internal ledger of shares and assets that is updated only through controlled functions like `deposit()` and `withdraw()`. This way, direct token transfers will not affect the internal accounting and will not break the invariant check in `flashLoan()`.
