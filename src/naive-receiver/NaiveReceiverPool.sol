@@ -48,7 +48,7 @@ contract NaiveReceiverPool is Multicall, IERC3156FlashLender {
 
         // Transfer WETH and handle control to receiver
         weth.transfer(address(receiver), amount);
-        totalDeposits -= amount;
+        totalDeposits -= amount; // @audit : reentrancy??
 
         if (receiver.onFlashLoan(msg.sender, address(weth), amount, FIXED_FEE, data) != CALLBACK_SUCCESS) {
             revert CallbackFailed();
@@ -63,6 +63,7 @@ contract NaiveReceiverPool is Multicall, IERC3156FlashLender {
         return true;
     }
 
+    // @audit : access control??
     function withdraw(uint256 amount, address payable receiver) external {
         // Reduce deposits
         deposits[_msgSender()] -= amount;

