@@ -152,8 +152,7 @@ contract TheRewarderChallenge is Test {
  
     /**
      * CODE YOUR SOLUTION HERE
-     */
-    function test_theRewarder() public checkSolvedByPlayer {
+     */function test_theRewarder() public checkSolvedByPlayer {
         IERC20[] memory tokensToClaim = new IERC20[](2);
         tokensToClaim[0] = IERC20(address(dvt));
         tokensToClaim[1] = IERC20(address(weth));
@@ -170,24 +169,26 @@ contract TheRewarderChallenge is Test {
         bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
 
 
-        Claim[] memory dvtClaims = new Claim[](dvtNumber);
-        Claim[] memory wethClaims = new Claim[](wethNumber);
-
-        uint256 abatchNumber = distributor.getNextBatchNumber(address(dvt));
-        uint256 bbatchNumber = distributor.getNextBatchNumber(address(weth));
-        // console.log(abatchNumber);
-        // console.log(bbatchNumber);
+        Claim[] memory claims = new Claim[]((dvtNumber) * 2);
 
         console.log(dvtBal); // before claim
 
         for (uint256 i = 0; i < dvtNumber; i++) {
-            dvtClaims[i] = Claim({
-                batchNumber: 0, 
+            claims[i * 2] = Claim({
+                batchNumber: 0,
                 amount: playerDvtAmount,
-                tokenIndex: 0, 
-                proof: merkle.getProof(wethLeaves, playerIndex) 
+                tokenIndex: 0, // DVT
+                proof: merkle.getProof(dvtLeaves, playerIndex)
+            });
+            claims[i * 2 + 1] = Claim({
+                batchNumber: 0,
+                amount: playerWethAmount,
+                tokenIndex: 1, // WETH
+                proof: merkle.getProof(wethLeaves, playerIndex)
             });
         }
+
+         distributor.claimRewards({inputClaims: claims, inputTokens: tokensToClaim});
 
         console.log(dvtBal); //after claim
 
@@ -197,6 +198,7 @@ contract TheRewarderChallenge is Test {
 
 
     }
+    
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH
