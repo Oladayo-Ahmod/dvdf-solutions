@@ -89,6 +89,12 @@ contract TheRewarderChallenge is Test {
         // Create Alice's claims
         Claim[] memory claims = new Claim[](2);
 
+        // @audit: if i structure it this way
+        // 1. find balance of the player and how many times it goes in each of the total claims which determines the number of the loop
+        // 2. create claims of the tokens 
+        // 3. create loop for each of the tokens.. big loop??
+        // 4. 
+
         // First, the DVT claim
         claims[0] = Claim({
             batchNumber: 0, // claim corresponds to first DVT batch
@@ -143,12 +149,26 @@ contract TheRewarderChallenge is Test {
         assertEq(weth.balanceOf(address(distributor)), expectedWETHLeft);
         assertEq(distributor.getRemaining(address(weth)), expectedWETHLeft);
     }
-
+ 
     /**
      * CODE YOUR SOLUTION HERE
      */
     function test_theRewarder() public checkSolvedByPlayer {
-        
+        IERC20[] memory tokensToClaim = new IERC20[](2);
+        tokensToClaim[0] = IERC20(address(dvt));
+        tokensToClaim[1] = IERC20(address(weth));
+
+        uint256 dvtNumber = 867;
+        uint256 wethNumber = 853;
+
+        Claim[] memory dvtClaims = new Claim[](dvtNumber)
+
+        for (uint256 i = 0; i < dvtNumber.length; i++) {
+            
+        }
+
+
+
     }
 
     /**
