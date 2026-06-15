@@ -160,8 +160,14 @@ contract TheRewarderChallenge is Test {
         uint256 playerWethAmount = 1171088749244340;
         uint256 playerDvtAmount = 11524763827831882;
         uint256 playerIndex = 188;
-        uint256 dvtNumber = 867;
+        uint256 dvtNumber = 10;
         uint256 wethNumber = 853;
+
+        uint256 dvtBal  = dvt.balanceOf(address(player));
+
+         // Calculate roots for DVT and WETH distributions
+        bytes32[] memory dvtLeaves = _loadRewards("/test/the-rewarder/dvt-distribution.json");
+        bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
 
 
         Claim[] memory dvtClaims = new Claim[](dvtNumber);
@@ -172,15 +178,19 @@ contract TheRewarderChallenge is Test {
         // console.log(abatchNumber);
         // console.log(bbatchNumber);
 
+        console.log(dvtBal); // before claim
 
-        for (uint256 i = 0; i < dvtNumber.length; i++) {
+        for (uint256 i = 0; i < dvtNumber; i++) {
             dvtClaims[i] = Claim({
-                batchNumber: 0, // claim corresponds to first WETH batch
+                batchNumber: 0, 
                 amount: playerDvtAmount,
-                tokenIndex: 0, // claim corresponds to second token in `tokensToClaim` array
-                proof: merkle.getProof(wethLeaves, 2) 
+                tokenIndex: 0, 
+                proof: merkle.getProof(wethLeaves, playerIndex) 
             });
         }
+
+        console.log(dvtBal); //after claim
+
 
 
     
