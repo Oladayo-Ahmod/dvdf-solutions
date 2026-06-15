@@ -159,8 +159,9 @@ contract TheRewarderChallenge is Test {
         uint256 playerWethAmount = 1171088749244340;
         uint256 playerDvtAmount = 11524763827831882;
         uint256 playerIndex = 188;
-        uint256 dvtNumber = 10;
+        uint256 dvtNumber = 867;
         uint256 wethNumber = 853;
+        uint256 diff = dvtNumber - wethNumber;
 
         uint256 dvtBal  = dvt.balanceOf(address(player));
 
@@ -169,11 +170,11 @@ contract TheRewarderChallenge is Test {
         bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
 
 
-        Claim[] memory claims = new Claim[]((dvtNumber) * 2);
+        Claim[] memory claims = new Claim[]((wethNumber) * 2 + diff);
 
         console.log(dvtBal); // before claim
 
-        for (uint256 i = 0; i < dvtNumber; i++) {
+        for (uint256 i = 0; i < wethNumber; i++) {
             claims[i * 2] = Claim({
                 batchNumber: 0,
                 amount: playerDvtAmount,
