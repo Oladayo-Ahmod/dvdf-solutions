@@ -159,6 +159,9 @@ contract TheRewarderChallenge is Test {
         tokensToClaim[1] = IERC20(address(weth));
         uint256 playerWethAmount = 1171088749244340;
         uint256 playerDvtAmount = 11524763827831882;
+        uint256 dvtPlayerIndex = 188;
+        uint256 wethPlayerIndex = 0;
+
 
         uint256 dvtNumber = 867;
         uint256 wethNumber = 853;
@@ -171,16 +174,29 @@ contract TheRewarderChallenge is Test {
         // console.log(abatchNumber);
         // console.log(bbatchNumber);
 
-
-        for (uint256 i = 0; i < dvtNumber.length; i++) {
-            dvtClaims[i] = Claim({
-                batchNumber: 0, // claim corresponds to first WETH batch
-                amount: playerDvtAmount,
-                tokenIndex: 0, // claim corresponds to second token in `tokensToClaim` array
-                proof: merkle.getProof(wethLeaves, 2) 
-            });
+        bytes32[] memory dvtLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
+    
+    // find player's leaf
+    for (uint256 i = 0; i < dvtLeaves.length; i++) {
+        bytes32 leaf = keccak256(abi.encodePacked(player, uint256(1171088749244340)));
+        if (dvtLeaves[i] == leaf) {
+            console.log("player DVT index:", i);
+            break;
         }
+    }
 
+
+        // for (uint256 i = 0; i < dvtNumber.length; i++) {
+        //     dvtClaims[i] = Claim({
+        //         batchNumber: 0, // claim corresponds to first WETH batch
+        //         amount: playerDvtAmount,
+        //         tokenIndex: 0, // claim corresponds to second token in `tokensToClaim` array
+        //         proof: merkle.getProof(wethLeaves, 2) 
+        //     });
+        // }
+
+
+    
 
 
     }
