@@ -107,8 +107,8 @@ contract TheRewarderChallenge is Test {
         claims[1] = Claim({
             batchNumber: 0, // claim corresponds to first WETH batch
             amount: ALICE_WETH_CLAIM_AMOUNT,
-            tokenIndex: 1, // claim corresponds to second token in `tokensToClaim` array
-            proof: merkle.getProof(wethLeaves, 2) // Alice's address is at index 2
+            tokenIndex: 1, 
+            proof: merkle.getProof(wethLeaves, 2) 
         });
 
         // Alice claims once
@@ -157,14 +157,28 @@ contract TheRewarderChallenge is Test {
         IERC20[] memory tokensToClaim = new IERC20[](2);
         tokensToClaim[0] = IERC20(address(dvt));
         tokensToClaim[1] = IERC20(address(weth));
+        uint256 playerWethAmount = 1171088749244340;
+        uint256 playerDvtAmount = 11524763827831882;
 
         uint256 dvtNumber = 867;
         uint256 wethNumber = 853;
 
-        Claim[] memory dvtClaims = new Claim[](dvtNumber)
+        Claim[] memory dvtClaims = new Claim[](dvtNumber);
+        Claim[] memory wethClaims = new Claim[](wethNumber);
+
+        uint256 abatchNumber = distributor.getNextBatchNumber(address(dvt));
+        uint256 bbatchNumber = distributor.getNextBatchNumber(address(weth));
+        // console.log(abatchNumber);
+        // console.log(bbatchNumber);
+
 
         for (uint256 i = 0; i < dvtNumber.length; i++) {
-            
+            dvtClaims[i] = Claim({
+                batchNumber: 0, // claim corresponds to first WETH batch
+                amount: playerDvtAmount,
+                tokenIndex: 0, // claim corresponds to second token in `tokensToClaim` array
+                proof: merkle.getProof(wethLeaves, 2) 
+            });
         }
 
 
