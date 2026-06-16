@@ -71,9 +71,9 @@ contract TheRewarderDistributor {
     function clean(IERC20[] calldata tokens) external {
         for (uint256 i = 0; i < tokens.length; i++) {
             IERC20 token = tokens[i];
-            if (distributions[token].remaining == 0) {
+            if (distributions[token].remaining == 0) { 
                 token.transfer(owner, token.balanceOf(address(this)));
-            }
+            } 
         }
     }
 
@@ -90,30 +90,31 @@ contract TheRewarderDistributor {
             uint256 wordPosition = inputClaim.batchNumber / 256;
             uint256 bitPosition = inputClaim.batchNumber % 256;
 
-            if (token != inputTokens[inputClaim.tokenIndex]) {
-                if (address(token) != address(0)) {
+            if (token != inputTokens[inputClaim.tokenIndex]) { // check if it's a new token
+                if (address(token) != address(0)) { // check if alreaday claimed
                     if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();
                 }
 
                 token = inputTokens[inputClaim.tokenIndex];
                 bitsSet = 1 << bitPosition; // set bit at given position
                 amount = inputClaim.amount;
-            } else {
+            } else { 
                 bitsSet = bitsSet | 1 << bitPosition;
-                amount += inputClaim.amount;
+                amount += inputClaim.amount; // does this mean i can claim multiple times if it is an old token?
             }
+
 
             // for the last claim
             if (i == inputClaims.length - 1) {
                 if (!_setClaimed(token, amount, wordPosition, bitsSet)) revert AlreadyClaimed();
-            }
+            } 
 
             bytes32 leaf = keccak256(abi.encodePacked(msg.sender, inputClaim.amount));
             bytes32 root = distributions[token].roots[inputClaim.batchNumber];
 
             if (!MerkleProof.verify(inputClaim.proof, root, leaf)) revert InvalidProof();
 
-            inputTokens[inputClaim.tokenIndex].transfer(msg.sender, inputClaim.amount);
+            inputTokens[inputClaim.tokenIndex].transfer(msg.sender, inputClaim.amount); // does it mean only the last claimer can receive the transfer?
         }
     }
 
