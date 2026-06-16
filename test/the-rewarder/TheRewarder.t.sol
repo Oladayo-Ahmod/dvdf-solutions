@@ -161,14 +161,10 @@ contract TheRewarderChallenge is Test {
         uint256 playerIndex = 188;
         uint256 dvtNumber = 867;
         uint256 wethNumber = 853;
-        uint256 diff = dvtNumber - wethNumber;
-
-        uint256 dvtBal  = dvt.balanceOf(address(player));
 
          // Calculate roots for DVT and WETH distributions
         bytes32[] memory dvtLeaves = _loadRewards("/test/the-rewarder/dvt-distribution.json");
         bytes32[] memory wethLeaves = _loadRewards("/test/the-rewarder/weth-distribution.json");
-        uint256 batchNumber = distributor.getNextBatchNumber(address(dvt));
 
         Claim[] memory claims = new Claim[](dvtNumber + wethNumber);
 
