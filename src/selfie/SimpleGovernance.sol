@@ -19,7 +19,7 @@ contract SimpleGovernance is ISimpleGovernance {
         _votingToken = votingToken;
         _actionCounter = 1;
     }
-
+ 
     function queueAction(address target, uint128 value, bytes calldata data) external returns (uint256 actionId) {
         if (!_hasEnoughVotes(msg.sender)) {
             revert NotEnoughVotes(msg.sender);
@@ -59,7 +59,7 @@ contract SimpleGovernance is ISimpleGovernance {
         actionToExecute.executedAt = uint64(block.timestamp);
 
         emit ActionExecuted(actionId, msg.sender);
-
+ 
         return actionToExecute.target.functionCallWithValue(actionToExecute.data, actionToExecute.value);
     }
 
@@ -88,10 +88,10 @@ contract SimpleGovernance is ISimpleGovernance {
         GovernanceAction memory actionToExecute = _actions[actionId];
 
         if (actionToExecute.proposedAt == 0) return false;
-
+        
         uint64 timeDelta;
         unchecked {
-            timeDelta = uint64(block.timestamp) - actionToExecute.proposedAt;
+            timeDelta = uint64(block.timestamp) - actionToExecute.proposedAt; 
         }
 
         return actionToExecute.executedAt == 0 && timeDelta >= ACTION_DELAY_IN_SECONDS;
