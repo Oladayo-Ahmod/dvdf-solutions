@@ -57,7 +57,7 @@ contract TrustfulOracle is AccessControlEnumerable {
     }
 
     function getMedianPrice(string calldata symbol) external view returns (uint256) {
-        return _computeMedianPrice(symbol);
+        return _computeMedianPrice(symbol); 
     }
 
     function getAllPricesForSymbol(string memory symbol) public view returns (uint256[] memory prices) {
@@ -67,7 +67,7 @@ contract TrustfulOracle is AccessControlEnumerable {
             address source = getRoleMember(TRUSTED_SOURCE_ROLE, i);
             prices[i] = getPriceBySource(symbol, source);
             unchecked {
-                ++i;
+                ++i; 
             }
         }
     }

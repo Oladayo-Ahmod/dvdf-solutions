@@ -49,10 +49,10 @@ Source Units in Scope: **`3`** (**100%**)
 
 | Type | File   | Logic Contracts | Interfaces | Lines | nLines | nSLOC | Comment Lines | Complex. Score | Capabilities |
 | ---- | ------ | --------------- | ---------- | ----- | ------ | ----- | ------------- | -------------- | ------------ | 
-| 📝 | src/selfie/SimpleGovernance.sol | 1 | **** | 105 | 102 | 71 | 7 | 44 | **<abbr title='Payable Functions'>💰</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
-| 📝 | src/selfie/SelfiePool.sol | 1 | **** | 77 | 73 | 56 | 2 | 47 | **<abbr title='Initiates ETH Value Transfer'>📤</abbr><abbr title='Uses Hash-Functions'>🧮</abbr>** |
-| 🔍 | src/selfie/ISimpleGovernance.sol | **** | 1 | 29 | 23 | 17 | 2 | 16 | **<abbr title='Payable Functions'>💰</abbr>** |
-| 📝🔍 | **Totals** | **2** | **1** | **211**  | **198** | **144** | **11** | **107** | **<abbr title='Payable Functions'>💰</abbr><abbr title='Initiates ETH Value Transfer'>📤</abbr><abbr title='Uses Hash-Functions'>🧮</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
+| 📝 | src/compromised/TrustfulOracleInitializer.sol | 1 | **** | 17 | 17 | 11 | 2 | 16 | **<abbr title='create/create2'>🌀</abbr>** |
+| 📝 | src/compromised/TrustfulOracle.sol | 1 | **** | 96 | 93 | 71 | 9 | 66 | **<abbr title='Uses Hash-Functions'>🧮</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
+| 📝 | src/compromised/Exchange.sol | 1 | **** | 73 | 73 | 52 | 4 | 63 | **<abbr title='Payable Functions'>💰</abbr><abbr title='create/create2'>🌀</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
+| 📝 | **Totals** | **3** | **** | **186**  | **183** | **134** | **15** | **145** | **<abbr title='Payable Functions'>💰</abbr><abbr title='Uses Hash-Functions'>🧮</abbr><abbr title='create/create2'>🌀</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
 
 <sub>
 Legend: <a onclick="toggleVisibility('table-legend', this)">[➕]</a>
@@ -71,9 +71,10 @@ Legend: <a onclick="toggleVisibility('table-legend', this)">[➕]</a>
 
 
 ##### <span id=t-deployable-contracts>Deployable Logic Contracts</span>
-Total: 2
-* 📝 `SimpleGovernance`
-* 📝 `SelfiePool`
+Total: 3
+* 📝 `TrustfulOracleInitializer`
+* 📝 `TrustfulOracle`
+* 📝 `Exchange`
 
 
 
@@ -141,14 +142,14 @@ The analysis finished with **`0`** errors and **`0`** duplicate files.
 
 #### <span id=t-inline-documentation>Inline Documentation</span>
 
-- **Comment-to-Source Ratio:** On average there are`14.18` code lines per comment (lower=better).
+- **Comment-to-Source Ratio:** On average there are`9.13` code lines per comment (lower=better).
 - **ToDo's:** `0` 
 
 #### <span id=t-components>Components</span>
 
 | 📝Contracts   | 📚Libraries | 🔍Interfaces | 🎨Abstract |
 | ------------- | ----------- | ------------ | ---------- |
-| 2 | 0  | 1  | 0 |
+| 3 | 0  | 0  | 0 |
 
 #### <span id=t-exposed-functions>Exposed Functions</span>
 
@@ -156,17 +157,17 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | 🌐Public   | 💰Payable |
 | ---------- | --------- |
-| 16 | 2  | 
+| 8 | 3  | 
 
 | External   | Internal | Private | Pure | View |
 | ---------- | -------- | ------- | ---- | ---- |
-| 16 | 6  | 2 | 1 | 11 |
+| 6 | 6  | 2 | 0 | 4 |
 
 #### <span id=t-statevariables>StateVariables</span>
 
 | Total      | 🌐Public  |
 | ---------- | --------- |
-| 7  | 2 |
+| 7  | 6 |
 
 #### <span id=t-capabilities>Capabilities</span>
 
@@ -176,7 +177,7 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | 📤 Transfers ETH | ⚡ Low-Level Calls | 👥 DelegateCall | 🧮 Uses Hash Functions | 🔖 ECRecover | 🌀 New/Create/Create2 |
 | ---------------- | ----------------- | --------------- | ---------------------- | ------------ | --------------------- |
-| `yes` | **** | **** | `yes` | **** | **** | 
+| **** | **** | **** | `yes` | **** | `yes`<br>→ `NewContract:TrustfulOracle`<br/>→ `NewContract:DamnValuableNFT` | 
 
 | ♻️ TryCatch | Σ Unchecked |
 | ---------- | ----------- |
@@ -186,11 +187,10 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | Dependency / Import Path | Count  | 
 | ------------------------ | ------ |
-| @openzeppelin/contracts/interfaces/IERC20.sol | 1 |
-| @openzeppelin/contracts/interfaces/IERC3156FlashBorrower.sol | 1 |
-| @openzeppelin/contracts/interfaces/IERC3156FlashLender.sol | 1 |
+| @openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol | 1 |
 | @openzeppelin/contracts/utils/Address.sol | 1 |
 | @openzeppelin/contracts/utils/ReentrancyGuard.sol | 1 |
+| solady/utils/LibSort.sol | 1 |
 
 #### <span id=t-totals>Totals</span>
 
@@ -249,9 +249,9 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| src/selfie/SimpleGovernance.sol | 96062a12bb27251c9e396848bcc78bbc44a0acd7 |
-| src/selfie/SelfiePool.sol | 6657ce81bd983b58839406cc37b3b731ef910e29 |
-| src/selfie/ISimpleGovernance.sol | f5d7c5d3dced058aae6f93b810827f1cb937744d |
+| src/compromised/TrustfulOracleInitializer.sol | 9d5e6201b0872823ce4827603a56a07b0133f999 |
+| src/compromised/TrustfulOracle.sol | 0d6df4bf0715113704e93ec38781f72b79db673a |
+| src/compromised/Exchange.sol | 35c3638542575d8ac84ab940a22b5b7ac4c3fc15 |
 
 
  Contracts Description Table
@@ -261,31 +261,24 @@ This section lists functions that are explicitly declared public or payable. Ple
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **SimpleGovernance** | Implementation | ISimpleGovernance |||
+| **TrustfulOracleInitializer** | Implementation |  |||
 | └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
-| └ | queueAction | External ❗️ | 🛑  |NO❗️ |
-| └ | executeAction | External ❗️ |  💵 |NO❗️ |
-| └ | getActionDelay | External ❗️ |   |NO❗️ |
-| └ | getVotingToken | External ❗️ |   |NO❗️ |
-| └ | getAction | External ❗️ |   |NO❗️ |
-| └ | getActionCounter | External ❗️ |   |NO❗️ |
-| └ | _canBeExecuted | Private 🔐 |   | |
-| └ | _hasEnoughVotes | Private 🔐 |   | |
 ||||||
-| **SelfiePool** | Implementation | IERC3156FlashLender, ReentrancyGuard |||
+| **TrustfulOracle** | Implementation | AccessControlEnumerable |||
 | └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
-| └ | maxFlashLoan | External ❗️ |   |NO❗️ |
-| └ | flashFee | External ❗️ |   |NO❗️ |
-| └ | flashLoan | External ❗️ | 🛑  | nonReentrant |
-| └ | emergencyExit | External ❗️ | 🛑  | onlyGovernance |
+| └ | setupInitialPrices | External ❗️ | 🛑  | onlyRole |
+| └ | postPrice | External ❗️ | 🛑  | onlyRole |
+| └ | getMedianPrice | External ❗️ |   |NO❗️ |
+| └ | getAllPricesForSymbol | Public ❗️ |   |NO❗️ |
+| └ | getPriceBySource | Public ❗️ |   |NO❗️ |
+| └ | _setPrice | Private 🔐 | 🛑  | |
+| └ | _computeMedianPrice | Private 🔐 |   | |
 ||||||
-| **ISimpleGovernance** | Interface |  |||
-| └ | queueAction | External ❗️ | 🛑  |NO❗️ |
-| └ | executeAction | External ❗️ |  💵 |NO❗️ |
-| └ | getActionDelay | External ❗️ |   |NO❗️ |
-| └ | getVotingToken | External ❗️ |   |NO❗️ |
-| └ | getAction | External ❗️ |   |NO❗️ |
-| └ | getActionCounter | External ❗️ |   |NO❗️ |
+| **Exchange** | Implementation | ReentrancyGuard |||
+| └ | <Constructor> | Public ❗️ |  💵 |NO❗️ |
+| └ | buyOne | External ❗️ |  💵 | nonReentrant |
+| └ | sellOne | External ❗️ | 🛑  | nonReentrant |
+| └ | <Receive Ether> | External ❗️ |  💵 |NO❗️ |
 
 
  Legend
