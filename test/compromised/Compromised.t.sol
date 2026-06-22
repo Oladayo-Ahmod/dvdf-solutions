@@ -85,7 +85,6 @@ contract CompromisedChallenge is Test {
         address source2 = vm.addr(privateKey2);
 
         uint256 currentPrice = oracle.getMedianPrice(nft.symbol());
-        console.log(currentPrice);
 
         vm.startPrank(source1);
         oracle.postPrice(nft.symbol(),0);
