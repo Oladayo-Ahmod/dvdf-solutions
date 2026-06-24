@@ -39,7 +39,7 @@ contract PuppetPool is ReentrancyGuard {
                 payable(msg.sender).sendValue(msg.value - depositRequired);
             }
         }
-
+            
         unchecked {
             deposits[msg.sender] += depositRequired;
         }
@@ -56,7 +56,7 @@ contract PuppetPool is ReentrancyGuard {
         return amount * _computeOraclePrice() * DEPOSIT_FACTOR / 10 ** 18;
     }
 
-    function _computeOraclePrice() private view returns (uint256) {
+    function _computeOraclePrice() private view returns (uint256) { // calculated in wei
         // calculates the price of the token in wei according to Uniswap pair
         return uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair);
     }

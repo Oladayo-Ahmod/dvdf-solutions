@@ -49,10 +49,10 @@ Source Units in Scope: **`3`** (**100%**)
 
 | Type | File   | Logic Contracts | Interfaces | Lines | nLines | nSLOC | Comment Lines | Complex. Score | Capabilities |
 | ---- | ------ | --------------- | ---------- | ----- | ------ | ----- | ------------- | -------------- | ------------ | 
-| 📝 | src/compromised/TrustfulOracleInitializer.sol | 1 | **** | 17 | 17 | 11 | 2 | 16 | **<abbr title='create/create2'>🌀</abbr>** |
-| 📝 | src/compromised/TrustfulOracle.sol | 1 | **** | 96 | 93 | 71 | 9 | 66 | **<abbr title='Uses Hash-Functions'>🧮</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
-| 📝 | src/compromised/Exchange.sol | 1 | **** | 73 | 73 | 52 | 4 | 63 | **<abbr title='Payable Functions'>💰</abbr><abbr title='create/create2'>🌀</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
-| 📝 | **Totals** | **3** | **** | **186**  | **183** | **134** | **15** | **145** | **<abbr title='Payable Functions'>💰</abbr><abbr title='Uses Hash-Functions'>🧮</abbr><abbr title='create/create2'>🌀</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
+| 📝 | src/puppet/PuppetPool.sol | 1 | **** | 63 | 63 | 42 | 5 | 28 | **<abbr title='Payable Functions'>💰</abbr><abbr title='Initiates ETH Value Transfer'>📤</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
+| 🔍 | src/puppet/IUniswapV1Factory.sol | **** | 1 | 13 | 7 | 4 | 1 | 13 | **** |
+| 🔍 | src/puppet/IUniswapV1Exchange.sol | **** | 1 | 115 | 12 | 9 | 1 | 72 | **<abbr title='Payable Functions'>💰</abbr>** |
+| 📝🔍 | **Totals** | **1** | **2** | **191**  | **82** | **55** | **7** | **113** | **<abbr title='Payable Functions'>💰</abbr><abbr title='Initiates ETH Value Transfer'>📤</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
 
 <sub>
 Legend: <a onclick="toggleVisibility('table-legend', this)">[➕]</a>
@@ -71,10 +71,8 @@ Legend: <a onclick="toggleVisibility('table-legend', this)">[➕]</a>
 
 
 ##### <span id=t-deployable-contracts>Deployable Logic Contracts</span>
-Total: 3
-* 📝 `TrustfulOracleInitializer`
-* 📝 `TrustfulOracle`
-* 📝 `Exchange`
+Total: 1
+* 📝 `PuppetPool`
 
 
 
@@ -142,14 +140,14 @@ The analysis finished with **`0`** errors and **`0`** duplicate files.
 
 #### <span id=t-inline-documentation>Inline Documentation</span>
 
-- **Comment-to-Source Ratio:** On average there are`9.13` code lines per comment (lower=better).
+- **Comment-to-Source Ratio:** On average there are`23.43` code lines per comment (lower=better).
 - **ToDo's:** `0` 
 
 #### <span id=t-components>Components</span>
 
 | 📝Contracts   | 📚Libraries | 🔍Interfaces | 🎨Abstract |
 | ------------- | ----------- | ------------ | ---------- |
-| 3 | 0  | 0  | 0 |
+| 1 | 0  | 2  | 0 |
 
 #### <span id=t-exposed-functions>Exposed Functions</span>
 
@@ -157,17 +155,17 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | 🌐Public   | 💰Payable |
 | ---------- | --------- |
-| 8 | 3  | 
+| 42 | 2  | 
 
 | External   | Internal | Private | Pure | View |
 | ---------- | -------- | ------- | ---- | ---- |
-| 6 | 6  | 2 | 0 | 4 |
+| 41 | 38  | 1 | 0 | 4 |
 
 #### <span id=t-statevariables>StateVariables</span>
 
 | Total      | 🌐Public  |
 | ---------- | --------- |
-| 7  | 6 |
+| 4  | 4 |
 
 #### <span id=t-capabilities>Capabilities</span>
 
@@ -177,7 +175,7 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | 📤 Transfers ETH | ⚡ Low-Level Calls | 👥 DelegateCall | 🧮 Uses Hash Functions | 🔖 ECRecover | 🌀 New/Create/Create2 |
 | ---------------- | ----------------- | --------------- | ---------------------- | ------------ | --------------------- |
-| **** | **** | **** | `yes` | **** | `yes`<br>→ `NewContract:TrustfulOracle`<br/>→ `NewContract:DamnValuableNFT` | 
+| `yes` | **** | **** | **** | **** | **** | 
 
 | ♻️ TryCatch | Σ Unchecked |
 | ---------- | ----------- |
@@ -187,10 +185,8 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | Dependency / Import Path | Count  | 
 | ------------------------ | ------ |
-| @openzeppelin/contracts/access/extensions/AccessControlEnumerable.sol | 1 |
 | @openzeppelin/contracts/utils/Address.sol | 1 |
 | @openzeppelin/contracts/utils/ReentrancyGuard.sol | 1 |
-| solady/utils/LibSort.sol | 1 |
 
 #### <span id=t-totals>Totals</span>
 
@@ -249,9 +245,9 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| src/compromised/TrustfulOracleInitializer.sol | 9d5e6201b0872823ce4827603a56a07b0133f999 |
-| src/compromised/TrustfulOracle.sol | 0d6df4bf0715113704e93ec38781f72b79db673a |
-| src/compromised/Exchange.sol | 35c3638542575d8ac84ab940a22b5b7ac4c3fc15 |
+| src/puppet/PuppetPool.sol | ae8bd441a3db7d4b046f3e24de0126b5530b1663 |
+| src/puppet/IUniswapV1Factory.sol | 2ba1dfeeda10f50a2255bb956910a592d20943bc |
+| src/puppet/IUniswapV1Exchange.sol | 4fa930b93b79d6b94320f29af7e854f31da1b367 |
 
 
  Contracts Description Table
@@ -261,24 +257,55 @@ This section lists functions that are explicitly declared public or payable. Ple
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **TrustfulOracleInitializer** | Implementation |  |||
+| **PuppetPool** | Implementation | ReentrancyGuard |||
 | └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
+| └ | borrow | External ❗️ |  💵 | nonReentrant |
+| └ | calculateDepositRequired | Public ❗️ |   |NO❗️ |
+| └ | _computeOraclePrice | Private 🔐 |   | |
 ||||||
-| **TrustfulOracle** | Implementation | AccessControlEnumerable |||
-| └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
-| └ | setupInitialPrices | External ❗️ | 🛑  | onlyRole |
-| └ | postPrice | External ❗️ | 🛑  | onlyRole |
-| └ | getMedianPrice | External ❗️ |   |NO❗️ |
-| └ | getAllPricesForSymbol | Public ❗️ |   |NO❗️ |
-| └ | getPriceBySource | Public ❗️ |   |NO❗️ |
-| └ | _setPrice | Private 🔐 | 🛑  | |
-| └ | _computeMedianPrice | Private 🔐 |   | |
+| **IUniswapV1Factory** | Interface |  |||
+| └ | createExchange | External ❗️ | 🛑  |NO❗️ |
+| └ | exchangeTemplate | External ❗️ |   |NO❗️ |
+| └ | getExchange | External ❗️ |   |NO❗️ |
+| └ | getToken | External ❗️ | 🛑  |NO❗️ |
+| └ | getTokenWithId | External ❗️ | 🛑  |NO❗️ |
+| └ | initializeFactory | External ❗️ | 🛑  |NO❗️ |
 ||||||
-| **Exchange** | Implementation | ReentrancyGuard |||
-| └ | <Constructor> | Public ❗️ |  💵 |NO❗️ |
-| └ | buyOne | External ❗️ |  💵 | nonReentrant |
-| └ | sellOne | External ❗️ | 🛑  | nonReentrant |
-| └ | <Receive Ether> | External ❗️ |  💵 |NO❗️ |
+| **IUniswapV1Exchange** | Interface |  |||
+| └ | addLiquidity | External ❗️ |  💵 |NO❗️ |
+| └ | allowance | External ❗️ | 🛑  |NO❗️ |
+| └ | approve | External ❗️ | 🛑  |NO❗️ |
+| └ | balanceOf | External ❗️ | 🛑  |NO❗️ |
+| └ | decimals | External ❗️ | 🛑  |NO❗️ |
+| └ | ethToTokenSwapInput | External ❗️ | 🛑  |NO❗️ |
+| └ | ethToTokenSwapOutput | External ❗️ | 🛑  |NO❗️ |
+| └ | ethToTokenTransferInput | External ❗️ | 🛑  |NO❗️ |
+| └ | ethToTokenTransferOutput | External ❗️ | 🛑  |NO❗️ |
+| └ | factoryAddress | External ❗️ | 🛑  |NO❗️ |
+| └ | getEthToTokenInputPrice | External ❗️ | 🛑  |NO❗️ |
+| └ | getEthToTokenOutputPrice | External ❗️ | 🛑  |NO❗️ |
+| └ | getTokenToEthInputPrice | External ❗️ | 🛑  |NO❗️ |
+| └ | getTokenToEthOutputPrice | External ❗️ | 🛑  |NO❗️ |
+| └ | name | External ❗️ | 🛑  |NO❗️ |
+| └ | removeLiquidity | External ❗️ | 🛑  |NO❗️ |
+| └ | setup | External ❗️ | 🛑  |NO❗️ |
+| └ | symbol | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenAddress | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToEthSwapInput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToEthSwapOutput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToEthTransferInput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToEthTransferOutput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToExchangeSwapInput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToExchangeSwapOutput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToExchangeTransferInput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToExchangeTransferOutput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToTokenSwapInput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToTokenSwapOutput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToTokenTransferInput | External ❗️ | 🛑  |NO❗️ |
+| └ | tokenToTokenTransferOutput | External ❗️ | 🛑  |NO❗️ |
+| └ | totalSupply | External ❗️ | 🛑  |NO❗️ |
+| └ | transfer | External ❗️ | 🛑  |NO❗️ |
+| └ | transferFrom | External ❗️ | 🛑  |NO❗️ |
 
 
  Legend

