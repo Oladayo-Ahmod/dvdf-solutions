@@ -28,8 +28,8 @@ abstract contract ClimberTimelockBase is AccessControl {
     function getOperationState(bytes32 id) public view returns (OperationState state) {
         Operation memory op = operations[id];
 
-        if (op.known) {
-            if (op.executed) {
+        if (op.known) { // if an op is known
+            if (op.executed) { // if op is known and exec
                 state = OperationState.Executed;
             } else if (block.timestamp < op.readyAtTimestamp) {
                 state = OperationState.Scheduled;

@@ -13,12 +13,13 @@ import {WITHDRAWAL_LIMIT, WAITING_PERIOD} from "./ClimberConstants.sol";
 import {CallerNotSweeper, InvalidWithdrawalAmount, InvalidWithdrawalTime} from "./ClimberErrors.sol";
 
 /**
- * @dev To be deployed behind a proxy following the UUPS pattern. Upgrades are to be triggered by the owner.
+ * @dev To be deployed behind a proxy following the UUPS pat
+ tern. Upgrades are to be triggered by the owner.
  */
 contract ClimberVault is Initializable, OwnableUpgradeable, UUPSUpgradeable {
     uint256 private _lastWithdrawalTimestamp;
     address private _sweeper;
-
+  
     modifier onlySweeper() {
         if (msg.sender != _sweeper) {
             revert CallerNotSweeper();

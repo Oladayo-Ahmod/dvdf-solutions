@@ -30,7 +30,6 @@ contract ClimberTimelock is ClimberTimelockBase {
     constructor(address admin, address proposer) {
         _setRoleAdmin(ADMIN_ROLE, ADMIN_ROLE);
         _setRoleAdmin(PROPOSER_ROLE, ADMIN_ROLE);
-
         _grantRole(ADMIN_ROLE, admin);
         _grantRole(ADMIN_ROLE, address(this)); // self administration
         _grantRole(PROPOSER_ROLE, proposer);
@@ -46,7 +45,7 @@ contract ClimberTimelock is ClimberTimelockBase {
     ) external onlyRole(PROPOSER_ROLE) {
         if (targets.length == MIN_TARGETS || targets.length >= MAX_TARGETS) {
             revert InvalidTargetsCount();
-        }
+        } 
 
         if (targets.length != values.length) {
             revert InvalidValuesCount();
@@ -87,11 +86,11 @@ contract ClimberTimelock is ClimberTimelockBase {
 
         bytes32 id = getOperationId(targets, values, dataElements, salt);
 
-        for (uint8 i = 0; i < targets.length; ++i) {
+        for (uint8 i = 0; i < targets.length; ++i) { // audit: hmm?
             targets[i].functionCallWithValue(dataElements[i], values[i]);
         }
 
-        if (getOperationState(id) != OperationState.ReadyForExecution) {
+        if (getOperationState(id) != OperationState.ReadyForExecution) { // audit : reentrancy?
             revert NotReadyForExecution(id);
         }
 
