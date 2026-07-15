@@ -53,6 +53,9 @@ contract ClimberAttacker is Test{
     function scheduleOperation(
     ) external {
         timelock.schedule(_targets, _values, _dataElements, _salt);
+
+        console.log(address(this));
+        console.log(vault.getSweeper());
     } 
         
 }
