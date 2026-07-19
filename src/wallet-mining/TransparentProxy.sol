@@ -25,7 +25,7 @@ contract TransparentProxy is ERC1967Proxy {
         return who == upgrader;
     }
 
-    function _fallback() internal override {
+    function _fallback() internal override { 
         if (isUpgrader(msg.sender)) {
             require(msg.sig == bytes4(keccak256("upgradeToAndCall(address, bytes)")));
             _dispatchUpgradeToAndCall();
