@@ -111,7 +111,7 @@ contract WalletAttacker is Test{
             token.transfer(ward, token.balanceOf(address(this)));
     }
 
-    function findNonce(address _user) internal returns (uint256, bytes memory) {
+    function findNonce(address _user) internal view returns (uint256 _nonce, bytes memory _initializer) {
         bytes memory deploymentData = abi.encodePacked(
             proxyFactory.proxyCreationCode(), // type(SafeProxy).creationCode
             uint256(uint160(address(singletonCopy))) // _singleton cast to uint256
