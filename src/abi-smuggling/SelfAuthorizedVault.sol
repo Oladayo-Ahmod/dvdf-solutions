@@ -21,7 +21,7 @@ contract SelfAuthorizedVault is AuthorizedExecutor {
         if (msg.sender != address(this)) {
             revert CallerNotAllowed();
         }
-        _;
+        _; 
     }
 
     /**

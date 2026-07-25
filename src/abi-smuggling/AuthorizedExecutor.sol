@@ -43,7 +43,7 @@ abstract contract AuthorizedExecutor is ReentrancyGuard {
      * @param target account where the action will be executed
      * @param actionData abi-encoded calldata to execute on the target
      */
-    function execute(address target, bytes calldata actionData) external nonReentrant returns (bytes memory) {
+    function execute(address target, bytes calldata actionData) external nonReentrant returns (bytes memory) { // audit :
         // Read the 4-bytes selector at the beginning of `actionData`
         bytes4 selector;
         uint256 calldataOffset = 4 + 32 * 3; // calldata position where `actionData` begins

