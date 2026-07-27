@@ -7,7 +7,7 @@ These NFTs could be so damn valuable that sellers can offer them in smaller frac
 The marketplace charges sellers a 1% fee in Damn Valuable Tokens (DVT). These can be stored in a secure on-chain vault, which in turn integrates with a DVT staking system.
 
 Somebody is selling one NFT for... wow, a million USDC?
-
+ 
 You better dig into that marketplace before the degens find out.
 
 You start with no DVTs. Rescue as much funds as you can in a single transaction, and deposit the assets into the designated recovery account.

