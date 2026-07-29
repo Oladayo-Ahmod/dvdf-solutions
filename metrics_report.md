@@ -44,15 +44,17 @@ This section lists files that are in scope for the metrics report.
 
 ### <span id=t-source-Units-in-Scope>Source Units in Scope</span>
 
-Source Units Analyzed: **`3`**<br>
-Source Units in Scope: **`3`** (**100%**)
+Source Units Analyzed: **`5`**<br>
+Source Units in Scope: **`5`** (**100%**)
 
 | Type | File   | Logic Contracts | Interfaces | Lines | nLines | nSLOC | Comment Lines | Complex. Score | Capabilities |
 | ---- | ------ | --------------- | ---------- | ----- | ------ | ----- | ------------- | -------------- | ------------ | 
-| 📝 | src/puppet/PuppetPool.sol | 1 | **** | 63 | 63 | 42 | 5 | 28 | **<abbr title='Payable Functions'>💰</abbr><abbr title='Initiates ETH Value Transfer'>📤</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
-| 🔍 | src/puppet/IUniswapV1Factory.sol | **** | 1 | 13 | 7 | 4 | 1 | 13 | **** |
-| 🔍 | src/puppet/IUniswapV1Exchange.sol | **** | 1 | 115 | 12 | 9 | 1 | 72 | **<abbr title='Payable Functions'>💰</abbr>** |
-| 📝🔍 | **Totals** | **1** | **2** | **191**  | **82** | **55** | **7** | **113** | **<abbr title='Payable Functions'>💰</abbr><abbr title='Initiates ETH Value Transfer'>📤</abbr><abbr title='Unchecked Blocks'>Σ</abbr>** |
+| 🔍 | src/curvy-puppet/IStableSwap.sol | **** | 1 | 70 | 27 | 23 | 2 | 85 | **<abbr title='Payable Functions'>💰</abbr>** |
+| 🔍 | src/curvy-puppet/ICryptoSwapPool.sol | **** | 1 | 166 | 48 | 39 | 6 | 155 | **<abbr title='Payable Functions'>💰</abbr>** |
+| 🔍 | src/curvy-puppet/ICryptoSwapFactory.sol | **** | 1 | 71 | 32 | 24 | 6 | 51 | **** |
+| 📝 | src/curvy-puppet/CurvyPuppetOracle.sol | 1 | **** | 38 | 38 | 27 | 2 | 19 | **** |
+| 📝 | src/curvy-puppet/CurvyPuppetLending.sol | 1 | **** | 136 | 136 | 100 | 6 | 80 | **<abbr title='Initiates ETH Value Transfer'>📤</abbr>** |
+| 📝🔍 | **Totals** | **2** | **3** | **481**  | **281** | **213** | **22** | **390** | **<abbr title='Payable Functions'>💰</abbr><abbr title='Initiates ETH Value Transfer'>📤</abbr>** |
 
 <sub>
 Legend: <a onclick="toggleVisibility('table-legend', this)">[➕]</a>
@@ -71,8 +73,9 @@ Legend: <a onclick="toggleVisibility('table-legend', this)">[➕]</a>
 
 
 ##### <span id=t-deployable-contracts>Deployable Logic Contracts</span>
-Total: 1
-* 📝 `PuppetPool`
+Total: 2
+* 📝 `CurvyPuppetOracle`
+* 📝 `CurvyPuppetLending`
 
 
 
@@ -140,14 +143,14 @@ The analysis finished with **`0`** errors and **`0`** duplicate files.
 
 #### <span id=t-inline-documentation>Inline Documentation</span>
 
-- **Comment-to-Source Ratio:** On average there are`23.43` code lines per comment (lower=better).
+- **Comment-to-Source Ratio:** On average there are`18.77` code lines per comment (lower=better).
 - **ToDo's:** `0` 
 
 #### <span id=t-components>Components</span>
 
 | 📝Contracts   | 📚Libraries | 🔍Interfaces | 🎨Abstract |
 | ------------- | ----------- | ------------ | ---------- |
-| 1 | 0  | 2  | 0 |
+| 2 | 0  | 3  | 0 |
 
 #### <span id=t-exposed-functions>Exposed Functions</span>
 
@@ -155,17 +158,17 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | 🌐Public   | 💰Payable |
 | ---------- | --------- |
-| 42 | 2  | 
+| 137 | 12  | 
 
 | External   | Internal | Private | Pure | View |
 | ---------- | -------- | ------- | ---- | ---- |
-| 41 | 38  | 1 | 0 | 4 |
+| 135 | 45  | 2 | 0 | 84 |
 
 #### <span id=t-statevariables>StateVariables</span>
 
 | Total      | 🌐Public  |
 | ---------- | --------- |
-| 4  | 4 |
+| 7  | 7 |
 
 #### <span id=t-capabilities>Capabilities</span>
 
@@ -179,14 +182,19 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 | ♻️ TryCatch | Σ Unchecked |
 | ---------- | ----------- |
-| **** | `yes` |
+| **** | **** |
 
 #### <span id=t-package-imports>Dependencies / External Imports</span>
 
 | Dependency / Import Path | Count  | 
 | ------------------------ | ------ |
-| @openzeppelin/contracts/utils/Address.sol | 1 |
+| @openzeppelin/contracts/interfaces/IERC20.sol | 1 |
 | @openzeppelin/contracts/utils/ReentrancyGuard.sol | 1 |
+| @openzeppelin/contracts/utils/math/SafeCast.sol | 1 |
+| forge-std/console.sol | 1 |
+| permit2/interfaces/IPermit2.sol | 1 |
+| solady/auth/Ownable.sol | 1 |
+| solmate/utils/FixedPointMathLib.sol | 1 |
 
 #### <span id=t-totals>Totals</span>
 
@@ -245,9 +253,11 @@ This section lists functions that are explicitly declared public or payable. Ple
 
 |  File Name  |  SHA-1 Hash  |
 |-------------|--------------|
-| src/puppet/PuppetPool.sol | ae8bd441a3db7d4b046f3e24de0126b5530b1663 |
-| src/puppet/IUniswapV1Factory.sol | 2ba1dfeeda10f50a2255bb956910a592d20943bc |
-| src/puppet/IUniswapV1Exchange.sol | 4fa930b93b79d6b94320f29af7e854f31da1b367 |
+| src/curvy-puppet/IStableSwap.sol | c5473ea0d0b207ad82638c884d30720173c6e3c7 |
+| src/curvy-puppet/ICryptoSwapPool.sol | 6f2b9fb451d2cfaf6e4724a8374331cfb889fba1 |
+| src/curvy-puppet/ICryptoSwapFactory.sol | 8e116a7b5ff9a78f902571fc6de016f39cc8b776 |
+| src/curvy-puppet/CurvyPuppetOracle.sol | 8d8140d9f4d0633bf0f3f52758508245efa87318 |
+| src/curvy-puppet/CurvyPuppetLending.sol | 7af812683c5e81c0d64e268d9240408564805c09 |
 
 
  Contracts Description Table
@@ -257,55 +267,156 @@ This section lists functions that are explicitly declared public or payable. Ple
 |:----------:|:-------------------:|:----------------:|:----------------:|:---------------:|
 |     └      |  **Function Name**  |  **Visibility**  |  **Mutability**  |  **Modifiers**  |
 ||||||
-| **PuppetPool** | Implementation | ReentrancyGuard |||
+| **IStableSwap** | Interface |  |||
+| └ | A | External ❗️ |   |NO❗️ |
+| └ | A_precise | External ❗️ |   |NO❗️ |
+| └ | add_liquidity | External ❗️ |  💵 |NO❗️ |
+| └ | admin_actions_deadline | External ❗️ |   |NO❗️ |
+| └ | admin_balances | External ❗️ |   |NO❗️ |
+| └ | admin_fee | External ❗️ |   |NO❗️ |
+| └ | apply_new_fee | External ❗️ | 🛑  |NO❗️ |
+| └ | apply_transfer_ownership | External ❗️ | 🛑  |NO❗️ |
+| └ | balances | External ❗️ |   |NO❗️ |
+| └ | calc_token_amount | External ❗️ |   |NO❗️ |
+| └ | calc_withdraw_one_coin | External ❗️ |   |NO❗️ |
+| └ | coins | External ❗️ |   |NO❗️ |
+| └ | commit_new_fee | External ❗️ | 🛑  |NO❗️ |
+| └ | commit_transfer_ownership | External ❗️ | 🛑  |NO❗️ |
+| └ | donate_admin_fees | External ❗️ | 🛑  |NO❗️ |
+| └ | exchange | External ❗️ |  💵 |NO❗️ |
+| └ | fee | External ❗️ |   |NO❗️ |
+| └ | future_A | External ❗️ |   |NO❗️ |
+| └ | future_A_time | External ❗️ |   |NO❗️ |
+| └ | future_admin_fee | External ❗️ |   |NO❗️ |
+| └ | future_fee | External ❗️ |   |NO❗️ |
+| └ | future_owner | External ❗️ |   |NO❗️ |
+| └ | get_dy | External ❗️ |   |NO❗️ |
+| └ | get_virtual_price | External ❗️ |   |NO❗️ |
+| └ | initial_A | External ❗️ |   |NO❗️ |
+| └ | initial_A_time | External ❗️ |   |NO❗️ |
+| └ | kill_me | External ❗️ | 🛑  |NO❗️ |
+| └ | lp_token | External ❗️ |   |NO❗️ |
+| └ | owner | External ❗️ |   |NO❗️ |
+| └ | ramp_A | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity_imbalance | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity_one_coin | External ❗️ | 🛑  |NO❗️ |
+| └ | revert_new_parameters | External ❗️ | 🛑  |NO❗️ |
+| └ | revert_transfer_ownership | External ❗️ | 🛑  |NO❗️ |
+| └ | stop_ramp_A | External ❗️ | 🛑  |NO❗️ |
+| └ | transfer_ownership_deadline | External ❗️ |   |NO❗️ |
+| └ | unkill_me | External ❗️ | 🛑  |NO❗️ |
+| └ | withdraw_admin_fees | External ❗️ | 🛑  |NO❗️ |
+||||||
+| **ICryptoSwapPool** | Interface |  |||
+| └ | <Fallback> | External ❗️ |  💵 |NO❗️ |
+| └ | A | External ❗️ |   |NO❗️ |
+| └ | D | External ❗️ |   |NO❗️ |
+| └ | add_liquidity | External ❗️ |  💵 |NO❗️ |
+| └ | add_liquidity | External ❗️ |  💵 |NO❗️ |
+| └ | add_liquidity | External ❗️ |  💵 |NO❗️ |
+| └ | adjustment_step | External ❗️ |   |NO❗️ |
+| └ | admin_actions_deadline | External ❗️ |   |NO❗️ |
+| └ | admin_fee | External ❗️ |   |NO❗️ |
+| └ | allowed_extra_profit | External ❗️ |   |NO❗️ |
+| └ | apply_new_parameters | External ❗️ | 🛑  |NO❗️ |
+| └ | balances | External ❗️ |   |NO❗️ |
+| └ | calc_token_amount | External ❗️ |   |NO❗️ |
+| └ | calc_withdraw_one_coin | External ❗️ |   |NO❗️ |
+| └ | claim_admin_fees | External ❗️ | 🛑  |NO❗️ |
+| └ | coins | External ❗️ |   |NO❗️ |
+| └ | commit_new_parameters | External ❗️ | 🛑  |NO❗️ |
+| └ | exchange | External ❗️ |  💵 |NO❗️ |
+| └ | exchange | External ❗️ |  💵 |NO❗️ |
+| └ | exchange | External ❗️ |  💵 |NO❗️ |
+| └ | exchange_extended | External ❗️ |  💵 |NO❗️ |
+| └ | exchange_underlying | External ❗️ |  💵 |NO❗️ |
+| └ | exchange_underlying | External ❗️ |  💵 |NO❗️ |
+| └ | factory | External ❗️ |   |NO❗️ |
+| └ | fee | External ❗️ |   |NO❗️ |
+| └ | fee_gamma | External ❗️ |   |NO❗️ |
+| └ | future_A_gamma | External ❗️ |   |NO❗️ |
+| └ | future_A_gamma_time | External ❗️ |   |NO❗️ |
+| └ | future_adjustment_step | External ❗️ |   |NO❗️ |
+| └ | future_admin_fee | External ❗️ |   |NO❗️ |
+| └ | future_allowed_extra_profit | External ❗️ |   |NO❗️ |
+| └ | future_fee_gamma | External ❗️ |   |NO❗️ |
+| └ | future_ma_half_time | External ❗️ |   |NO❗️ |
+| └ | future_mid_fee | External ❗️ |   |NO❗️ |
+| └ | future_out_fee | External ❗️ |   |NO❗️ |
+| └ | gamma | External ❗️ |   |NO❗️ |
+| └ | get_dy | External ❗️ |   |NO❗️ |
+| └ | get_virtual_price | External ❗️ |   |NO❗️ |
+| └ | initial_A_gamma | External ❗️ |   |NO❗️ |
+| └ | initial_A_gamma_time | External ❗️ |   |NO❗️ |
+| └ | initialize | External ❗️ | 🛑  |NO❗️ |
+| └ | last_prices | External ❗️ |   |NO❗️ |
+| └ | last_prices_timestamp | External ❗️ |   |NO❗️ |
+| └ | lp_price | External ❗️ |   |NO❗️ |
+| └ | ma_half_time | External ❗️ |   |NO❗️ |
+| └ | mid_fee | External ❗️ |   |NO❗️ |
+| └ | out_fee | External ❗️ |   |NO❗️ |
+| └ | price_oracle | External ❗️ |   |NO❗️ |
+| └ | price_scale | External ❗️ |   |NO❗️ |
+| └ | ramp_A_gamma | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity_one_coin | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity_one_coin | External ❗️ | 🛑  |NO❗️ |
+| └ | remove_liquidity_one_coin | External ❗️ | 🛑  |NO❗️ |
+| └ | revert_new_parameters | External ❗️ | 🛑  |NO❗️ |
+| └ | stop_ramp_A_gamma | External ❗️ | 🛑  |NO❗️ |
+| └ | token | External ❗️ |   |NO❗️ |
+| └ | virtual_price | External ❗️ |   |NO❗️ |
+| └ | xcp_profit | External ❗️ |   |NO❗️ |
+| └ | xcp_profit_a | External ❗️ |   |NO❗️ |
+||||||
+| **ICryptoSwapFactory** | Interface |  |||
+| └ | accept_transfer_ownership | External ❗️ | 🛑  |NO❗️ |
+| └ | admin | External ❗️ |   |NO❗️ |
+| └ | commit_transfer_ownership | External ❗️ | 🛑  |NO❗️ |
+| └ | deploy_gauge | External ❗️ | 🛑  |NO❗️ |
+| └ | deploy_pool | External ❗️ | 🛑  |NO❗️ |
+| └ | fee_receiver | External ❗️ |   |NO❗️ |
+| └ | find_pool_for_coins | External ❗️ |   |NO❗️ |
+| └ | find_pool_for_coins | External ❗️ |   |NO❗️ |
+| └ | future_admin | External ❗️ |   |NO❗️ |
+| └ | gauge_implementation | External ❗️ |   |NO❗️ |
+| └ | get_balances | External ❗️ |   |NO❗️ |
+| └ | get_coin_indices | External ❗️ |   |NO❗️ |
+| └ | get_coins | External ❗️ |   |NO❗️ |
+| └ | get_decimals | External ❗️ |   |NO❗️ |
+| └ | get_eth_index | External ❗️ |   |NO❗️ |
+| └ | get_gauge | External ❗️ |   |NO❗️ |
+| └ | get_token | External ❗️ |   |NO❗️ |
+| └ | pool_count | External ❗️ |   |NO❗️ |
+| └ | pool_implementation | External ❗️ |   |NO❗️ |
+| └ | pool_list | External ❗️ |   |NO❗️ |
+| └ | set_fee_receiver | External ❗️ | 🛑  |NO❗️ |
+| └ | set_gauge_implementation | External ❗️ | 🛑  |NO❗️ |
+| └ | set_pool_implementation | External ❗️ | 🛑  |NO❗️ |
+| └ | set_token_implementation | External ❗️ | 🛑  |NO❗️ |
+| └ | token_implementation | External ❗️ |   |NO❗️ |
+||||||
+| **CurvyPuppetOracle** | Implementation | Ownable |||
 | └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
-| └ | borrow | External ❗️ |  💵 | nonReentrant |
-| └ | calculateDepositRequired | Public ❗️ |   |NO❗️ |
-| └ | _computeOraclePrice | Private 🔐 |   | |
+| └ | getPrice | External ❗️ |   |NO❗️ |
+| └ | setPrice | External ❗️ | 🛑  | onlyOwner |
 ||||||
-| **IUniswapV1Factory** | Interface |  |||
-| └ | createExchange | External ❗️ | 🛑  |NO❗️ |
-| └ | exchangeTemplate | External ❗️ |   |NO❗️ |
-| └ | getExchange | External ❗️ |   |NO❗️ |
-| └ | getToken | External ❗️ | 🛑  |NO❗️ |
-| └ | getTokenWithId | External ❗️ | 🛑  |NO❗️ |
-| └ | initializeFactory | External ❗️ | 🛑  |NO❗️ |
-||||||
-| **IUniswapV1Exchange** | Interface |  |||
-| └ | addLiquidity | External ❗️ |  💵 |NO❗️ |
-| └ | allowance | External ❗️ | 🛑  |NO❗️ |
-| └ | approve | External ❗️ | 🛑  |NO❗️ |
-| └ | balanceOf | External ❗️ | 🛑  |NO❗️ |
-| └ | decimals | External ❗️ | 🛑  |NO❗️ |
-| └ | ethToTokenSwapInput | External ❗️ | 🛑  |NO❗️ |
-| └ | ethToTokenSwapOutput | External ❗️ | 🛑  |NO❗️ |
-| └ | ethToTokenTransferInput | External ❗️ | 🛑  |NO❗️ |
-| └ | ethToTokenTransferOutput | External ❗️ | 🛑  |NO❗️ |
-| └ | factoryAddress | External ❗️ | 🛑  |NO❗️ |
-| └ | getEthToTokenInputPrice | External ❗️ | 🛑  |NO❗️ |
-| └ | getEthToTokenOutputPrice | External ❗️ | 🛑  |NO❗️ |
-| └ | getTokenToEthInputPrice | External ❗️ | 🛑  |NO❗️ |
-| └ | getTokenToEthOutputPrice | External ❗️ | 🛑  |NO❗️ |
-| └ | name | External ❗️ | 🛑  |NO❗️ |
-| └ | removeLiquidity | External ❗️ | 🛑  |NO❗️ |
-| └ | setup | External ❗️ | 🛑  |NO❗️ |
-| └ | symbol | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenAddress | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToEthSwapInput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToEthSwapOutput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToEthTransferInput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToEthTransferOutput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToExchangeSwapInput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToExchangeSwapOutput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToExchangeTransferInput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToExchangeTransferOutput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToTokenSwapInput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToTokenSwapOutput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToTokenTransferInput | External ❗️ | 🛑  |NO❗️ |
-| └ | tokenToTokenTransferOutput | External ❗️ | 🛑  |NO❗️ |
-| └ | totalSupply | External ❗️ | 🛑  |NO❗️ |
-| └ | transfer | External ❗️ | 🛑  |NO❗️ |
-| └ | transferFrom | External ❗️ | 🛑  |NO❗️ |
+| **CurvyPuppetLending** | Implementation | ReentrancyGuard |||
+| └ | <Constructor> | Public ❗️ | 🛑  |NO❗️ |
+| └ | deposit | External ❗️ | 🛑  | nonReentrant |
+| └ | withdraw | External ❗️ | 🛑  | nonReentrant |
+| └ | borrow | External ❗️ | 🛑  |NO❗️ |
+| └ | redeem | External ❗️ | 🛑  | nonReentrant |
+| └ | liquidate | External ❗️ | 🛑  | nonReentrant |
+| └ | getBorrowValue | Public ❗️ |   |NO❗️ |
+| └ | getCollateralValue | Public ❗️ |   |NO❗️ |
+| └ | getBorrowAmount | External ❗️ |   |NO❗️ |
+| └ | getCollateralAmount | External ❗️ |   |NO❗️ |
+| └ | _pullAssets | Private 🔐 | 🛑  | |
+| └ | _getLPTokenPrice | Private 🔐 |   | |
 
 
  Legend

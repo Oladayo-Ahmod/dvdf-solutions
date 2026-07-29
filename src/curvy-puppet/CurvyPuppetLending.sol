@@ -40,7 +40,7 @@ contract CurvyPuppetLending is ReentrancyGuard {
         oracle = _oracle;
     }
 
-    function deposit(uint256 amount) external nonReentrant {
+    function deposit(uint256 amount) external nonReentrant { // tracking deposit with positions
         positions[msg.sender].collateralAmount += amount;
         _pullAssets(collateralAsset, amount);
     }
@@ -108,12 +108,12 @@ contract CurvyPuppetLending is ReentrancyGuard {
         IERC20(collateralAsset).transfer(msg.sender, collateralAmount);
     }
 
-    function getBorrowValue(uint256 amount) public view returns (uint256) {
+    function getBorrowValue(uint256 amount) public view returns (uint256) { // audit : getting borrow value using LP token price
         if (amount == 0) return 0;
         return amount.mulWadUp(_getLPTokenPrice());
     }
 
-    function getCollateralValue(uint256 amount) public view returns (uint256) {
+    function getCollateralValue(uint256 amount) public view returns (uint256) { // audit : getting collateral value with oracle
         if (amount == 0) return 0;
         return amount.mulWadDown(oracle.getPrice(collateralAsset).value);
     }
@@ -131,6 +131,6 @@ contract CurvyPuppetLending is ReentrancyGuard {
     }
 
     function _getLPTokenPrice() private view returns (uint256) {
-        return oracle.getPrice(curvePool.coins(0)).value.mulWadDown(curvePool.get_virtual_price());
+        return oracle.getPrice(curvePool.coins(0)).value.mulWadDown(curvePool.get_virtual_price()); // audit : what if i manipulated the pricing?
     }
 }
