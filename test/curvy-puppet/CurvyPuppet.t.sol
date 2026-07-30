@@ -158,46 +158,7 @@ contract CurvyPuppetChallenge is Test {
      * CODE YOUR SOLUTION HERE
      */
     function test_curvyPuppet() public checkSolvedByPlayer {
-        uint256 _price = lending.getBorrowValue(1e18);
-        uint256 collat = lending.getCollateralValue(1e18);
-        uint256[2] memory amounts;
-        amounts[0] = 190 ether;
-        amounts[1] = 0;
-
-        console.log(curvePool.get_virtual_price());
-
-        IERC20(curvePool.lp_token()).transferFrom(
-            treasury,
-            player,
-            TREASURY_LP_BALANCE
-        );
-
-        weth.transferFrom(treasury, player, TREASURY_WETH_BALANCE);
-        weth.withdraw(TREASURY_WETH_BALANCE);
-
-        curvePool.exchange{value: 200 ether}(
-            0,
-            1,
-            200 ether,
-            0
-        );
-
-        // curvePool.add_liquidity{value : 1}([uint256(0), uint256(1)], 0);
-        // curvePool.remove_liquidity(
-        //     5 ether,
-        //     amounts
-        // );
-        console.log(curvePool.get_virtual_price());
-
-        amounts = [uint256(0), uint256(1)];
-        curvePool.add_liquidity{value : 1}(amounts, 0);
-        
-        console.log(curvePool.get_virtual_price());
-
-        // console.log(_price);
-        // console.log(collat);
-
-        // IERC20(stETH).approve(address(curvePool), 10 ether);
+        //
     }
 
     /**
