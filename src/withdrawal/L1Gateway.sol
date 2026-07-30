@@ -39,12 +39,12 @@ contract L1Gateway is OwnableRoles {
         bytes memory message,
         bytes32[] memory proof
     ) external {
-        if (timestamp + DELAY > block.timestamp) revert EarlyWithdrawal();
+        if (timestamp + DELAY > block.timestamp) revert EarlyWithdrawal(); 
 
         bytes32 leaf = keccak256(abi.encode(nonce, l2Sender, target, timestamp, message));
 
         // Only allow trusted operators to finalize without proof
-        bool isOperator = hasAnyRole(msg.sender, OPERATOR_ROLE);
+        bool isOperator = hasAnyRole(msg.sender, OPERATOR_ROLE); // audit : trusted operator can withdraw without proof, is there a way to pretend to be one?
         if (!isOperator) {
             if (MerkleProof.verify(proof, root, leaf)) {
                 emit ValidProof(proof, root, leaf);

@@ -76,5 +76,13 @@ nSLOC order(D-O):
 1. IStableSwap.sol✅
 2. ICryptoSwapPool.sol✅    
 3. ICryptoSwapFactory.sol✅
-4. CurvyPuppetOracle.sol
-5. CurvyPuppetLending
+4. CurvyPuppetOracle.sol✅
+5. CurvyPuppetLending✅
+
+# Withdrawal
+nSLOC order(D-O):
+1. L2MessageStore✅
+2. TokenBridge
+3. L2Handler✅
+4. L1Gateway✅
+5. L1Forwarder✅

@@ -46,7 +46,7 @@ contract L1Forwarder is ReentrancyGuard, Ownable {
         if (msg.sender == address(gateway) && gateway.xSender() == l2Handler) {
             require(!failedMessages[messageId]);
         } else {
-            require(failedMessages[messageId]);
+            require(failedMessages[messageId]); // audit : ??
         }
 
         if (successfulMessages[messageId]) {
