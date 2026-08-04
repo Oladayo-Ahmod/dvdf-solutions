@@ -91,7 +91,7 @@ forge test --match-contract <ChallengeName> -vvvv
 
 ## About
 
-Built by **0xSpectreSec** (Oladayo Ahmod) — smart contract security researcher from Nigeria.
+Built by **0xSpectreSec** (Oladayo Ahmod) — smart contract security researcher.
 Every challenge includes a full audit-style writeup with vulnerability description, impact, PoC, and recommended mitigation.
 
 [![X](https://img.shields.io/badge/X-@0xSpectreSec-black?style=flat-square&logo=x)](https://twitter.com/0xSpectreSec)
